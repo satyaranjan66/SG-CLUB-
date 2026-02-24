@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Rummy</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-gold: #f7dfa5;
+            --dark-gold: #d4af37;
+            --light-gray: #76808f;
+            --card-bg: #22272b;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg-black); 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 20px; 
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .back-btn { font-size: 24px; text-decoration: none; color: white; cursor: pointer; }
+        .user-balance-head { color: var(--card-gold); font-weight: bold; font-size: 14px; }
+
+        /* Rummy Banner */
+        .rummy-hero {
+            margin: 15px;
+            height: 150px;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://img.freepik.com/free-vector/casino-poker-banner-with-cards-chips_1017-31354.jpg') center/cover;
+            border-radius: 15px;
+            border: 1px solid var(--dark-gold);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 20px;
+        }
+        .rummy-hero h1 { margin: 0; color: var(--card-gold); font-size: 24px; }
+        .rummy-hero p { margin: 5px 0 0; font-size: 13px; color: #ccc; }
+
+        /* Game Modes */
+        .section-title {
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--card-gold);
+        }
+
+        .modes-list { padding: 0 15px; }
+
+        .mode-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #333;
+            transition: 0.2s;
+        }
+        .mode-card:active { transform: scale(0.98); }
+
+        .mode-left { display: flex; align-items: center; gap: 15px; }
+        .mode-icon { width: 50px; height: 50px; }
+        .mode-info h3 { margin: 0; font-size: 16px; }
+        .mode-info p { margin: 3px 0 0; font-size: 11px; color: var(--light-gray); }
+
+        .play-btn {
+            background: linear-gradient(90deg, #f7dfa5 0%, #d4af37 100%);
+            color: #4e342e;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .online-tag {
+            font-size: 10px;
+            color: #4caf50;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .dot { width: 5px; height: 5px; background: #4caf50; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <a href="home.html" class="back-btn">‹</a>
+            <div style="font-weight: bold;">Rummy Lobby</div>
+        </div>
+        <div class="user-balance-head" id="userBalanceHead">Balance: ₹0.00</div>
+    </div>
+
+    <div class="rummy-hero">
+        <h1>Indian Rummy</h1>
+        <p>Skill based game, Real players.</p>
+    </div>
+
+    <div class="section-title">Select Mode</div>
+
+    <div class="modes-list">
+        <div class="mode-card" onclick="handleRummyPlay('Points Rummy')">
+            <div class="mode-left">
+                <img src="https://cdn-icons-png.flaticon.com/512/2619/2619245.png" class="mode-icon">
+                <div class="mode-info">
+                    <h3>Points Rummy</h3>
+                    <p>Min Buy-in: ₹5.00</p>
+                    <div class="online-tag"><div class="dot"></div> 1.5k Players</div>
+                </div>
+            </div>
+            <button class="play-btn">PLAY</button>
+        </div>
+
+        <div class="mode-card" onclick="handleRummyPlay('Pool Rummy')">
+            <div class="mode-left">
+                <img src="https://cdn-icons-png.flaticon.com/512/2619/2619205.png" class="mode-icon">
+                <div class="mode-info">
+                    <h3>Pool Rummy</h3>
+                    <p>Min Buy-in: ₹10.00</p>
+                    <div class="online-tag"><div class="dot"></div> 840 Players</div>
+                </div>
+            </div>
+            <button class="play-btn">PLAY</button>
+        </div>
+
+        <div class="mode-card" onclick="handleRummyPlay('Deals Rummy')">
+            <div class="mode-left">
+                <img src="https://cdn-icons-png.flaticon.com/512/2619/2619210.png" class="mode-icon">
+                <div class="mode-info">
+                    <h3>Deals Rummy</h3>
+                    <p>Min Buy-in: ₹20.00</p>
+                    <div class="online-tag"><div class="dot"></div> 320 Players</div>
+                </div>
+            </div>
+            <button class="play-btn">PLAY</button>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+        authDomain: "sg-club-66003.firebaseapp.com",
+        projectId: "sg-club-66003",
+        storageBucket: "sg-club-66003.firebasestorage.app",
+        messagingSenderId: "538659001804",
+        appId: "1:538659001804:web:1245dcae38071d1949b969"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userId = localStorage.getItem("userLoggedIn");
+
+    let isAccountActivated = false;
+    let currentBalance = 0;
+
+    if (!userId) {
+        window.location.href = "login.html";
+    } else {
+        onValue(ref(db, 'users/' + userId), (snap) => {
+            if(snap.exists()){
+                const data = snap.val();
+                currentBalance = data.balance || 0;
+                document.getElementById('userBalanceHead').innerText = "Balance: ₹" + currentBalance.toFixed(2);
+                isAccountActivated = data.isActivated || false; 
+            }
+        });
+    }
+
+    window.handleRummyPlay = (gameType) => {
+        // Activation Check (Home page wala logic)
+        if (!isAccountActivated) {
+            alert("Account not active! Please make your first deposit to activate your account and play Rummy.");
+            window.location.href = "deposit.html";
+            return;
+        }
+
+        // Balance Check (Example: Min ₹5 required)
+        if (currentBalance < 5) {
+            alert("Insufficient balance to join " + gameType + ". Minimum ₹5 required.");
+        } else {
+            alert("Joining " + gameType + " Table...");
+            // window.location.href = "rummy-table.html";
+        }
+    };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deposit - SG CLUB</title>
+    <style>
+        :root {
+            --bg-dark: #22272b;
+            --page-bg: #0f1214;
+            --card-gold: linear-gradient(135deg, #f7dfa5 0%, #d4af37 100%);
+            --text-gold: #d4af37;
+            --border-gray: #333;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--page-bg); color: white; margin: 0; padding-bottom: 30px; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--page-bg); position: sticky; top: 0; z-index: 100; }
+        .header .back-btn { font-size: 20px; cursor: pointer; color: white; text-decoration: none; }
+        .header .title { font-size: 18px; font-weight: bold; }
+        .header .hist-link { color: var(--text-gold); font-size: 14px; text-decoration: none; }
+
+        .balance-card { background: var(--card-gold); margin: 15px; padding: 20px; border-radius: 15px; color: #4e342e; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .bal-amt { font-size: 28px; font-weight: bold; margin-top: 5px; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 15px; margin-bottom: 20px; }
+        .method-item { background: var(--bg-dark); border-radius: 10px; padding: 15px 5px; text-align: center; border: 1px solid var(--border-gray); cursor: pointer; }
+        .method-item.active { background: var(--card-gold); color: #4e342e; border: none; }
+        .method-item img { width: 30px; height: 30px; margin-bottom: 8px; }
+
+        /* STATIC QR SECTION */
+        #qrSection { 
+            display: none; 
+            background: var(--bg-dark); 
+            margin: 15px; 
+            padding: 20px; 
+            border-radius: 15px; 
+            text-align: center; 
+            border: 1px solid var(--text-gold);
+        }
+        .qr-display-box {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .qr-static-img {
+            width: 200px; /* Aapke QR image ka size */
+            height: 200px;
+            display: block;
+        }
+
+        .utr-input { 
+            width: 90%; 
+            background: #1a1d20; 
+            border: 1px solid #444; 
+            color: white; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-top: 15px;
+            outline: none;
+            text-align: center;
+        }
+
+        .amount-section { background: var(--bg-dark); margin: 20px 15px; padding: 15px; border-radius: 15px; }
+        .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .amt-btn { background: #1a1d20; border: 1px solid var(--border-gray); color: white; padding: 10px; border-radius: 5px; text-align: center; cursor: pointer; }
+        
+        .input-row { display: flex; align-items: center; border-bottom: 1px solid #444; padding: 10px 0; }
+        .input-row input { background: none; border: none; color: white; font-size: 20px; width: 100%; outline: none; }
+
+        .submit-btn { background: var(--card-gold); color: #4e342e; text-align: center; padding: 15px; margin: 20px 15px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="back-btn">‹</a>
+        <div class="title">Deposit</div>
+        <a href="wallet.html" class="hist-link">History</a>
+    </div>
+
+    <div class="balance-card">
+        <div style="font-size: 14px;">Total Balance</div>
+        <div class="bal-amt" id="displayBal">₹0.00</div>
+    </div>
+
+    <div class="grid-container">
+        <div class="method-item active" onclick="selectMethod(this)">
+            <img src="upi_app.png" alt="App">
+            <span>Wake UP-APP</span>
+        </div>
+        <div class="method-item" onclick="selectMethod(this)">
+            <img src="upi_qr.png" alt="QR">
+            <span>UPI-QRpay</span>
+        </div>
+        <div class="method-item">
+            <img src="usdt.png" alt="USDT">
+            <span>USDT</span>
+        </div>
+    </div>
+
+    <div id="qrSection">
+        <div style="color: var(--text-gold); font-weight: bold; margin-bottom: 10px;">Scan QR to Pay</div>
+        <div class="qr-display-box">
+            <img src="phone.png" class="qr-static-img" id="staticQR">
+        </div>
+        <div style="font-size: 12px; color: #76808f; margin-top: 10px;">
+            Please scan and pay. Then enter UTR.
+        </div>
+        <input type="text" id="utrInput" class="utr-input" placeholder="Enter 12-digit UTR number" maxlength="12">
+    </div>
+
+    <div class="amount-section">
+        <div class="input-row">
+            <span style="color:var(--text-gold); margin-right:10px;">₹</span>
+            <input type="number" id="depInput" placeholder="Enter amount">
+        </div>
+        <div class="amount-grid">
+            <div class="amt-btn" onclick="setAmt(100)">₹ 100</div>
+            <div class="amt-btn" onclick="setAmt(500)">₹ 500</div>
+            <div class="amt-btn" onclick="setAmt(1000)">₹ 1K</div>
+            <div class="amt-btn" onclick="setAmt(5000)">₹ 5K</div>
+            <div class="amt-btn" onclick="setAmt(10000)">₹ 10K</div>
+            <div class="amt-btn" onclick="setAmt(50000)">₹ 50K</div>
+        </div>
+    </div>
+
+    <div class="submit-btn" onclick="processDeposit()">Submit Deposit</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        const userId = localStorage.getItem("userLoggedIn");
+        if (!userId) { window.location.href = "login.html"; }
+
+        // Method Selector
+        window.selectMethod = (el) => {
+            document.querySelectorAll('.method-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+            
+            const methodName = el.querySelector('span').innerText;
+            const qrSection = document.getElementById('qrSection');
+            
+            // Agar QRpay select kiya toh photo dikhao
+            if(methodName === "UPI-QRpay") {
+                qrSection.style.display = 'block';
+            } else {
+                qrSection.style.display = 'none';
+            }
+        };
+
+        // Balance fetch
+        if(userId) {
+            onValue(ref(db, 'users/' + userId), (snap) => {
+                if(snap.exists()){
+                    document.getElementById('displayBal').innerText = `₹${snap.val().balance.toFixed(2)}`;
+                }
+            });
+        }
+
+        window.setAmt = (v) => { document.getElementById('depInput').value = v; };
+
+        window.processDeposit = async () => {
+            const amt = document.getElementById('depInput').value;
+            const method = document.querySelector('.method-item.active span').innerText;
+            const utr = document.getElementById('utrInput').value;
+
+            if(!amt || amt < 100) return alert("Minimum deposit ₹100");
+            if(method === "UPI-QRpay" && utr.length < 12) return alert("Enter correct 12-digit UTR");
+
+            await push(ref(db, 'deposits'), {
+                uid: userId,
+                amount: parseFloat(amt),
+                method: method,
+                utr: method === "UPI-QRpay" ? utr : "N/A",
+                status: 'pending',
+                date: new Date().toLocaleString()
+            });
+            alert("Deposit request sent! Check status in history.");
+            window.location.href = "wallet.html";
+        };
+    </script>
+</body>
+</html>

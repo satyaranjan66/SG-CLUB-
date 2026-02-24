@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Live Casino</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-gold: #f7dfa5;
+            --dark-gold: #d4af37;
+            --light-gray: #76808f;
+            --card-bg: #22272b;
+            --live-red: #ff4d4d;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg-black); 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 30px; 
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .back-btn { font-size: 24px; text-decoration: none; color: white; cursor: pointer; }
+        .user-balance-head { color: var(--card-gold); font-weight: bold; font-size: 14px; }
+
+        /* Casino Banner */
+        .casino-banner {
+            margin: 15px;
+            height: 160px;
+            background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url('https://img.freepik.com/free-vector/realistic-casino-background_23-2148281395.jpg') center/cover;
+            border-radius: 15px;
+            border: 1px solid var(--dark-gold);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 20px;
+        }
+        .casino-banner h1 { margin: 0; color: var(--card-gold); font-size: 24px; text-transform: uppercase; }
+        .casino-banner p { margin: 5px 0 0; font-size: 13px; color: #eee; }
+
+        /* Section Header */
+        .section-header {
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--card-gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--live-red);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Casino Grid */
+        .casino-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 15px;
+        }
+        .casino-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #333;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .casino-card:active { transform: scale(0.95); }
+        
+        .card-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-info {
+            padding: 10px;
+            background: var(--card-bg);
+            text-align: center;
+        }
+        .card-info h4 { margin: 0; font-size: 14px; color: white; }
+        .card-info p { margin: 4px 0 0; font-size: 11px; color: var(--light-gray); }
+
+        .play-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.6);
+            color: var(--card-gold);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 0.5px solid var(--dark-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <a href="home.html" class="back-btn">‹</a>
+            <div style="font-weight: bold;">Live Casino</div>
+        </div>
+        <div class="user-balance-head" id="userBalanceHead">Balance: ₹0.00</div>
+    </div>
+
+    <div class="casino-banner">
+        <h1>Live Dealers</h1>
+        <p>Real-time Casino Experience</p>
+    </div>
+
+    <div class="section-header">
+        <div class="live-dot"></div>
+        Hot Games
+    </div>
+
+    <div class="casino-grid">
+        <div class="casino-card" onclick="handleCasinoPlay('Roulette')">
+            <span class="play-tag">LIVE</span>
+            <img src="https://img.freepik.com/free-photo/view-poker-cards-roulette-wheel_23-2148843405.jpg" class="card-img">
+            <div class="card-info">
+                <h4>Evolution Roulette</h4>
+                <p>Min: ₹50</p>
+            </div>
+        </div>
+
+        <div class="casino-card" onclick="handleCasinoPlay('Dragon Tiger')">
+            <span class="play-tag">LIVE</span>
+            <img src="https://img.freepik.com/free-vector/dragon-tiger-illustration_1017-31358.jpg" class="card-img" onerror="this.src='https://via.placeholder.com/150/22272b/d4af37?text=Dragon+Tiger'">
+            <div class="card-info">
+                <h4>Dragon Tiger</h4>
+                <p>Min: ₹20</p>
+            </div>
+        </div>
+
+        <div class="casino-card" onclick="handleCasinoPlay('Baccarat')">
+            <span class="play-tag">LIVE</span>
+            <img src="https://img.freepik.com/free-photo/baccarat-table-with-cards_23-2148843398.jpg" class="card-img">
+            <div class="card-info">
+                <h4>Speed Baccarat</h4>
+                <p>Min: ₹100</p>
+            </div>
+        </div>
+
+        <div class="casino-card" onclick="handleCasinoPlay('Teen Patti')">
+            <span class="play-tag">LIVE</span>
+            <img src="https://img.freepik.com/free-photo/poker-cards-chips-green-table_23-2148843415.jpg" class="card-img">
+            <div class="card-info">
+                <h4>Live Teen Patti</h4>
+                <p>Min: ₹10</p>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+        authDomain: "sg-club-66003.firebaseapp.com",
+        projectId: "sg-club-66003",
+        storageBucket: "sg-club-66003.firebasestorage.app",
+        messagingSenderId: "538659001804",
+        appId: "1:538659001804:web:1245dcae38071d1949b969"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userId = localStorage.getItem("userLoggedIn");
+
+    let isAccountActivated = false;
+    let currentBalance = 0;
+
+    if (!userId) {
+        window.location.href = "login.html";
+    } else {
+        onValue(ref(db, 'users/' + userId), (snap) => {
+            if(snap.exists()){
+                const data = snap.val();
+                currentBalance = data.balance || 0;
+                document.getElementById('userBalanceHead').innerText = "Balance: ₹" + currentBalance.toFixed(2);
+                isAccountActivated = data.isActivated || false; 
+            }
+        });
+    }
+
+    window.handleCasinoPlay = (gameName) => {
+        // Same logic as Home Page
+        if (!isAccountActivated) {
+            alert("Account not active! Please make your first deposit to activate your account and play Live Casino.");
+            window.location.href = "deposit.html";
+            return;
+        }
+
+        if (currentBalance < 10) {
+            alert("Insufficient balance! Minimum ₹10 required for " + gameName);
+        } else {
+            alert("Connecting to Live " + gameName + " Table...");
+            // window.location.href = "live-stream.html";
+        }
+    };
+</script>
+
+</body>
+</html>

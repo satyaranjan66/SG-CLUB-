@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Register - SG CLUB</title>
+    <style>
+        :root {
+            --bg-deep: #18191b;
+            --input-bg: #333333;
+            --text-gold: #d4af37;
+            --btn-gold: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --placeholder: #666;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-deep);
+            color: #ccc;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header-top {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--text-gold);
+            margin-bottom: 30px;
+        }
+
+        .header-top img { width: 30px; margin-bottom: 5px; }
+        .header-top h2 { color: var(--text-gold); margin: 0; font-size: 18px; font-weight: normal; }
+
+        .reg-form { width: 90%; max-width: 400px; }
+
+        .label-group { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #fff; font-size: 14px; }
+        .label-group img { width: 18px; height: 18px; }
+
+        .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .country-code {
+            background: var(--input-bg);
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            min-width: 60px;
+            justify-content: center;
+        }
+
+        .input-box {
+            background: var(--input-bg);
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+
+        .input-box input {
+            background: none;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .input-box input::placeholder { color: var(--placeholder); }
+
+        .agreement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            margin: 20px 0;
+            color: #999;
+        }
+        .agreement span { color: var(--text-gold); }
+
+        .register-btn {
+            background: var(--btn-gold);
+            color: #4e342e;
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .login-link-btn {
+            background: none;
+            border: 1px solid var(--text-gold);
+            color: #999;
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .login-link-btn span { color: var(--text-gold); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header-top">
+        <img src="phone_icon.png" alt=""> <h2>Register your phone</h2>
+    </div>
+
+    <div class="reg-form">
+        <div class="label-group">📱 Phone number</div>
+        <div class="input-row">
+            <div class="country-code">+91 ⌵</div>
+            <div class="input-box" style="margin-bottom: 0;">
+                <input type="number" id="regMobile" placeholder="Please enter the phone number">
+            </div>
+        </div>
+
+        <div class="label-group">🔒 Set password</div>
+        <div class="input-box">
+            <input type="password" id="regPass" placeholder="Set password">
+        </div>
+
+        <div class="label-group">🔒 Confirm password</div>
+        <div class="input-box">
+            <input type="password" id="confirmPass" placeholder="Confirm password">
+        </div>
+
+        <div class="label-group">👤 Invite code</div>
+        <div class="input-box">
+            <input type="text" id="inviteCode" value="376184269600">
+        </div>
+
+        <div class="agreement">
+            <input type="checkbox" checked style="accent-color: var(--text-gold);">
+            I have read and agree <span>【Privacy Agreement】</span>
+        </div>
+
+        <button class="register-btn" onclick="handleRegister()">Register</button>
+
+        <a href="login.html" class="login-link-btn">I have an account <span>Login</span></a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- AUTO-FILL INVITE CODE FROM URL ---
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const invite = urlParams.get('invite');
+            if (invite) {
+                document.getElementById('inviteCode').value = invite;
+                document.getElementById('inviteCode').readOnly = true;
+            }
+        };
+
+        window.handleRegister = async () => {
+            const mobile = document.getElementById('regMobile').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const confirmPass = document.getElementById('confirmPass').value.trim();
+            const invite = document.getElementById('inviteCode').value.trim();
+
+            if(mobile.length < 10) return alert("Enter valid mobile number");
+            if(pass !== confirmPass) return alert("Passwords do not match!");
+            if(pass.length < 6) return alert("Password must be at least 6 characters");
+
+            const userRef = ref(db, 'users/' + mobile);
+            const snap = await get(userRef);
+
+            if(snap.exists()) {
+                alert("Mobile number already exists!");
+            } else {
+                // 1. Create New User
+                await set(userRef, {
+                    mobile: mobile,
+                    password: pass,
+                    balance: 20.0, 
+                    isActivated: false,
+                    inviteCode: invite || "none",
+                    directSubordinates: 0,
+                    totalTeamSize: 0,
+                    level1Comm: 0,
+                    level2Comm: 0,
+                    level3Comm: 0,
+                    date: new Date().toLocaleString()
+                });
+
+                // 2. Referral logic (Update Boss Team Size)
+                if (invite && invite !== "none") {
+                    const bossRef = ref(db, 'users/' + invite);
+                    const bossSnap = await get(bossRef);
+
+                    if (bossSnap.exists()) {
+                        let bossData = bossSnap.val();
+                        // Update Boss (Lvl 1)
+                        await update(bossRef, {
+                            directSubordinates: (bossData.directSubordinates || 0) + 1,
+                            totalTeamSize: (bossData.totalTeamSize || 0) + 1
+                        });
+
+                        // Update GrandBoss (Lvl 2 Team)
+                        let grandBoss = bossData.inviteCode;
+                        if (grandBoss && grandBoss !== "none") {
+                            const gbRef = ref(db, 'users/' + grandBoss);
+                            const gbSnap = await get(gbRef);
+                            if(gbSnap.exists()){
+                                await update(gbRef, { totalTeamSize: (gbSnap.val().totalTeamSize || 0) + 1 });
+                                
+                                // Update GreatGrandBoss (Lvl 3 Team)
+                                let ggb = gbSnap.val().inviteCode;
+                                if(ggb && ggb !== "none") {
+                                    const ggbRef = ref(db, 'users/' + ggb);
+                                    const ggbSnap = await get(ggbRef);
+                                    if(ggbSnap.exists()) {
+                                        await update(ggbRef, { totalTeamSize: (ggbSnap.val().totalTeamSize || 0) + 1 });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                localStorage.setItem("userLoggedIn", mobile);
+                alert("Registration Successful! ₹20 Bonus Added.");
+                window.location.href = "home.html";
+            }
+        };
+    </script>
+</body>
+</html>

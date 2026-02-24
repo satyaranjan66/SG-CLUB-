@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Account</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-gray: #2b3237;
+            --gold-grad: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --text-gold: #d4af37;
+            --text-gray: #8e99a2;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-black); color: white; margin: 0; padding-bottom: 90px; }
+
+        /* --- Updated Header --- */
+        .user-header {
+            background: var(--gold-grad);
+            height: 160px;
+            border-bottom-left-radius: 40%;
+            border-bottom-right-radius: 40%;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: #4e342e;
+            position: relative;
+            z-index: 1;
+        }
+        .avatar-box { position: relative; margin-top: -20px; }
+        .avatar { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .vip-tag { position: absolute; bottom: 5px; right: 0; background: #fff; border-radius: 10px; font-size: 10px; padding: 2px 8px; font-weight: bold; border: 1px solid #d4af37; color: #4e342e; }
+        
+        .user-details { margin-left: 15px; margin-top: -20px; }
+        .user-details .name { font-size: 18px; font-weight: bold; letter-spacing: 0.5px; }
+        .uid-badge { 
+            background: rgba(0,0,0,0.1); padding: 3px 10px; border-radius: 20px; 
+            font-size: 12px; display: flex; align-items: center; gap: 8px; margin: 5px 0;
+            width: fit-content; font-weight: 500;
+        }
+        .copy-icon { cursor: pointer; opacity: 0.7; }
+
+        .main-content { margin-top: -50px; padding: 0 15px; position: relative; z-index: 2; }
+
+        .balance-card {
+            background: var(--card-gray); border-radius: 15px; padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .bal-title { font-size: 13px; color: var(--text-gray); }
+        .bal-amount { font-size: 26px; font-weight: bold; margin: 12px 0; display: flex; align-items: center; gap: 10px; }
+        .refresh-btn { font-size: 18px; color: var(--text-gray); cursor: pointer; }
+
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; text-align: center; }
+        .action-box { cursor: pointer; text-decoration: none; }
+        .action-box img { width: 32px; height: 32px; margin-bottom: 8px; }
+        .action-box span { display: block; font-size: 12px; color: var(--text-gold); font-weight: 500; }
+
+        .record-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .record-card { 
+            background: var(--card-gray); padding: 15px; border-radius: 12px; 
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+            border: 1px solid transparent; transition: 0.3s;
+        }
+        .record-card:active { background: #353c42; }
+        .record-card img { width: 38px; height: 38px; }
+        .record-info div:first-child { font-size: 13px; font-weight: bold; color: #fff; }
+        .record-info div:last-child { font-size: 10px; color: var(--text-gray); margin-top: 2px; }
+
+        .service-list { background: var(--card-gray); margin-top: 25px; border-radius: 15px; overflow: hidden; }
+        .service-row { 
+            display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #383f44;
+            text-decoration: none; color: white; cursor: pointer;
+        }
+        .service-row:last-child { border-bottom: none; }
+        .service-row img { width: 22px; margin-right: 15px; }
+        .service-row span { flex: 1; font-size: 14px; }
+        .service-row .arrow { color: #666; font-size: 16px; }
+        .badge-count { color: var(--text-gray); font-size: 14px; margin-right: 8px; }
+
+        .nav-bar {
+            position: fixed; bottom: 0; width: 100%; background: #1a1d20; display: flex;
+            justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; z-index: 100;
+        }
+        .nav-tab { text-align: center; text-decoration: none; color: var(--text-gray); font-size: 11px; flex: 1; }
+        .nav-tab.active { color: var(--text-gold); }
+        .nav-tab img { width: 22px; display: block; margin: 0 auto 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="user-header">
+        <div class="avatar-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="avatar">
+            <div class="vip-tag">VIP0</div>
+        </div>
+        <div class="user-details">
+            <div class="name" id="userName">Loading...</div>
+            <div class="uid-badge">
+                UID | <span id="userIdDisplay">000</span>
+                <span class="copy-icon" onclick="copyId()">📋</span>
+            </div>
+            <div style="font-size: 10px; opacity: 0.8; margin-top: 5px;">Member since SG Club</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="balance-card">
+            <div class="bal-title">Total balance</div>
+            <div class="bal-amount">₹<span id="accBal">0.00</span> <span class="refresh-btn" onclick="location.reload()">↻</span></div>
+            
+            <div class="action-grid">
+                <a href="wallet.html" class="action-box"><img src="wallet.png"><span>Wallet</span></a>
+                <a href="deposit.html" class="action-box"><img src="dep.png"><span>Deposit</span></a>
+                <a href="withdraw.html" class="action-box"><img src="wd.png"><span>Withdraw</span></a>
+                <div class="action-box"><img src="diamond.png"><span>VIP</span></div>
+            </div>
+        </div>
+
+        <div class="record-grid">
+            <div class="record-card" onclick="alert('Opening Game History...')">
+                <img src="rh.png"><div class="record-info"><div>Game History</div><div>My game history</div></div>
+            </div>
+            <div class="record-card" onclick="alert('Opening Transaction History...')">
+                <img src="rh.png"><div class="record-info"><div>Transaction</div><div>My transaction history</div></div>
+            </div>
+            <div class="record-card" onclick="location.href='wallet.html'">
+                <img src="rh.png"><div class="record-info"><div>Deposit</div><div>My deposit history</div></div>
+            </div>
+            <div class="record-card" onclick="location.href='wallet.html'">
+                <img src="rh.png"><div class="record-info"><div>Withdraw</div><div>My withdraw history</div></div>
+            </div>
+        </div>
+
+        <div class="service-list">
+            <div class="service-row">
+                <img src="activity.png"><span>Notification</span><span class="badge-count">6</span><span class="arrow">›</span>
+            </div>
+            <div class="service-row">
+                <img src="diamond.png"><span>Gifts</span><span class="arrow">›</span>
+            </div>
+            <div class="service-row">
+                <img src="activity.png"><span>Game statistics</span><span class="arrow">›</span>
+            </div>
+            <div class="service-row">
+                <img src="home.png"><span>Language</span><span style="font-size: 12px; color: #666; margin-right: 5px;">English</span><span class="arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="home.html" class="nav-tab"><img src="home.png">Home</a>
+        <a href="activity.html" class="nav-tab"><img src="activity.png">Activity</a>
+        <a href="promotion.html" class="nav-tab">
+            <div style="background:var(--text-gold); width:40px; height:40px; border-radius:50%; margin:-25px auto 5px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                <img src="diamond.png" style="width:25px; margin:0;">
+            </div>Promotion
+        </a>
+        <a href="wallet.html" class="nav-tab"><img src="wallet.png">Wallet</a>
+        <a href="account.html" class="nav-tab active"><img src="account.png">Account</a>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- SESSION LOGIC ---
+        const userId = localStorage.getItem("userLoggedIn"); 
+
+        if (!userId) {
+            window.location.href = "login.html";
+        } else {
+            onValue(ref(db, 'users/' + userId), (snap) => {
+                if(snap.exists()){
+                    const data = snap.val();
+                    document.getElementById('accBal').innerText = (data.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    document.getElementById('userName').innerText = data.name || "MEMBER_" + userId.substring(6);
+                    document.getElementById('userIdDisplay').innerText = userId;
+                } else {
+                    window.location.href = "login.html";
+                }
+            });
+        }
+
+        window.copyId = () => {
+            if(userId) {
+                navigator.clipboard.writeText(userId);
+                alert("ID Copied!");
+            }
+        };
+    </script>
+</body>
+</html>

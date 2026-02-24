@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Withdraw - SG CLUB</title>
+    <style>
+        :root {
+            --bg-dark: #22272b;
+            --page-bg: #0f1214;
+            --card-gold: linear-gradient(135deg, #f7dfa5 0%, #d4af37 100%);
+            --text-gold: #d4af37;
+            --btn-gray: #33393e;
+            --border-gray: #444;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--page-bg); color: white; margin: 0; padding-bottom: 20px; }
+
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; font-weight: bold; background: var(--page-bg); position: sticky; top: 0; z-index: 100; }
+        .header .back-btn { font-size: 20px; cursor: pointer; text-decoration: none; color: white; }
+        .header .title { font-size: 18px; }
+        .header .hist-link { color: #eee; font-size: 14px; text-decoration: none; font-weight: normal; cursor: pointer; }
+
+        /* Method Selection */
+        .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
+        .method-item {
+            background: var(--btn-gray);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .method-item.active { background: var(--card-gold); color: #4e342e; }
+        .method-item img { width: 35px; height: 35px; display: block; margin: 0 auto 5px; }
+        .method-item span { font-size: 13px; font-weight: bold; }
+
+        /* UPI Add Section */
+        .add-bank-box {
+            background: var(--btn-gray);
+            margin: 0 15px;
+            padding: 30px 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px dashed var(--text-gold);
+            cursor: pointer;
+        }
+        .add-icon { font-size: 30px; color: #777; margin-bottom: 10px; }
+        .add-text { color: #aaa; font-size: 14px; }
+        .warning-text { color: var(--text-gold); font-size: 12px; text-align: center; padding: 15px; }
+
+        /* Input Section */
+        .input-section { background: var(--btn-gray); margin: 0 15px; padding: 20px; border-radius: 15px; }
+        .input-row { 
+            background: #1a1d20; 
+            border-radius: 30px; 
+            display: flex; 
+            align-items: center; 
+            padding: 10px 20px;
+            margin-bottom: 15px;
+        }
+        .input-row span { color: var(--text-gold); font-size: 20px; font-weight: bold; margin-right: 15px; }
+        .input-row input { background: none; border: none; color: white; font-size: 16px; width: 100%; outline: none; }
+        .input-row input::placeholder { color: #555; }
+
+        .bal-info { display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 10px; }
+        .all-btn { color: #fff; background: var(--text-gold); padding: 2px 15px; border-radius: 10px; color: black; font-weight: bold; cursor: pointer; }
+
+        /* Withdraw Button */
+        .withdraw-btn {
+            background: #eee;
+            color: #888;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: not-allowed;
+            font-size: 16px;
+        }
+        .withdraw-btn.active { background: var(--card-gold); color: #4e342e; cursor: pointer; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-card {
+            background: var(--bg-dark);
+            width: 85%;
+            max-width: 350px;
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--text-gold);
+            text-align: center;
+        }
+        .modal-card h3 { color: var(--text-gold); margin-top: 0; }
+        .modal-input {
+            width: 90%;
+            background: #1a1d20;
+            border: 1px solid #444;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .modal-btn {
+            background: var(--card-gold);
+            color: #4e342e;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Rules Section */
+        .rules-box {
+            margin: 15px;
+            background: #1a1d20;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .rule-item { font-size: 12px; color: #888; margin-bottom: 8px; display: flex; align-items: flex-start; }
+        .rule-item::before { content: "♦"; color: var(--text-gold); margin-right: 8px; }
+
+        .footer-history {
+            display: flex; align-items: center; gap: 10px; padding: 15px;
+            color: var(--text-gold); font-weight: bold; font-size: 15px; cursor: pointer;
+        }
+
+        /* History Modal */
+        #historyModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--page-bg);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .history-card {
+            background: var(--bg-dark);
+            margin: 10px 15px;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--text-gold);
+        }
+        .hist-flex { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .status-pending { color: #ff9800; }
+        .status-success { color: #4caf50; }
+        .status-reject { color: #f44336; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="javascript:history.back()" class="back-btn">‹</a>
+        <div class="title">Withdraw</div>
+        <div class="hist-link" onclick="toggleHistory(true)">Withdrawal history</div>
+    </div>
+
+    <div class="method-grid">
+        <div class="method-item active">
+            <img src="https://cdn-icons-png.flaticon.com/512/483/483361.png" style="filter: invert(1); width: 30px;"> <span>UPI</span>
+        </div>
+        <div class="method-item">
+            <img src="usdt.png" alt=""> <span>USDT</span>
+        </div>
+    </div>
+
+    <div class="add-bank-box" id="upiDisplay" onclick="openUPIModal()">
+        <div class="add-icon" id="upiIcon">+</div>
+        <div class="add-text" id="upiText">Add a UPI ID</div>
+    </div>
+
+    <div class="warning-text">Need to add beneficiary information to be able to withdraw money</div>
+
+    <div class="input-section">
+        <div class="input-row">
+            <span>₹</span>
+            <input type="number" id="withAmount" placeholder="Please enter the amount" oninput="checkInput()">
+        </div>
+        <div class="bal-info">
+            <span>Withdrawable balance <span style="color:var(--text-gold)" id="displayWithBal">₹0.00</span></span>
+            <span class="all-btn" onclick="withdrawAll()">All</span>
+        </div>
+        <div class="bal-info">
+            <span>Withdrawal amount received</span>
+            <span style="color:var(--text-gold)" id="receivedAmt">₹0.00</span>
+        </div>
+    </div>
+
+    <div class="withdraw-btn" id="submitBtn" onclick="processWithdraw()">Withdraw</div>
+
+    <div class="rules-box">
+        <div class="rule-item">Need to bet ₹0.00 to be able to withdraw</div>
+        <div class="rule-item">Withdraw time 00:00-23:59</div>
+        <div class="rule-item">Inday Remaining Withdrawal Times 3</div>
+        <div class="rule-item" style="color: white; font-weight: bold;">Withdrawal amount range ₹200.00-₹50,000.00</div>
+        <div class="rule-item">Please confirm your beneficial account information before withdrawing.</div>
+        <div class="rule-item">If your beneficial information is incorrect, please contact customer service</div>
+    </div>
+
+    <div class="modal-overlay" id="upiModal">
+        <div class="modal-card">
+            <h3>Add UPI Details</h3>
+            <input type="text" id="accName" class="modal-input" placeholder="Account Holder Name">
+            <input type="text" id="accUpi" class="modal-input" placeholder="UPI ID (e.g. name@upi)">
+            <button class="modal-btn" onclick="saveUPI()">SAVE DETAILS</button>
+            <p style="color: #777; font-size: 12px; margin-top: 15px;" onclick="closeUPIModal()">Cancel</p>
+        </div>
+    </div>
+
+    <div class="footer-history" onclick="toggleHistory(true)">
+        <img src="history_icon.png" style="width:20px;"> Withdrawal history
+    </div>
+
+    <div id="historyModal">
+        <div class="header">
+            <div class="back-btn" onclick="toggleHistory(false)">‹</div>
+            <div class="title">Withdrawal History</div>
+            <div></div>
+        </div>
+        <div id="historyContent"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const userId = localStorage.getItem("userLoggedIn");
+
+        if (!userId) {
+            window.location.href = "login.html";
+        }
+
+        let currentBalance = 0;
+        let upiAdded = false;
+
+        if (userId) {
+            onValue(ref(db, 'users/' + userId), (snap) => {
+                if(snap.exists()){
+                    const data = snap.val();
+                    currentBalance = data.balance || 0;
+                    document.getElementById('displayWithBal').innerText = `₹${currentBalance.toFixed(2)}`;
+                    
+                    if(data.upiDetail) {
+                        upiAdded = true;
+                        document.getElementById('upiText').innerText = `UPI: ${data.upiDetail.upiId}`;
+                        document.getElementById('upiIcon').innerText = "✓";
+                        document.getElementById('upiDisplay').style.border = "1px solid #4caf50";
+                        checkInput();
+                    }
+                }
+            });
+        }
+
+        // UPI Modal Logic
+        window.openUPIModal = () => {
+            document.getElementById('upiModal').style.display = 'flex';
+        };
+        window.closeUPIModal = () => {
+            document.getElementById('upiModal').style.display = 'none';
+        };
+
+        window.saveUPI = async () => {
+            const name = document.getElementById('accName').value;
+            const upiId = document.getElementById('accUpi').value;
+            if(name && upiId) {
+                await set(ref(db, `users/${userId}/upiDetail`), { 
+                    name: name, 
+                    upiId: upiId,
+                    addedAt: new Date().toLocaleString()
+                });
+                alert("UPI Details saved!");
+                closeUPIModal();
+            } else {
+                alert("Please fill all fields");
+            }
+        };
+
+        window.processWithdraw = async () => {
+            const amt = parseFloat(document.getElementById('withAmount').value);
+            
+            if(!upiAdded) return alert("Please add UPI detail first");
+            if(isNaN(amt) || amt < 200) return alert("Minimum withdrawal is ₹200");
+            if(amt > currentBalance) return alert("Insufficient balance");
+
+            if(!confirm(`Confirm withdraw ₹${amt}?`)) return;
+
+            try {
+                await push(ref(db, 'withdrawals'), {
+                    uid: userId,
+                    amount: amt,
+                    method: "UPI",
+                    status: 'pending',
+                    date: new Date().toLocaleString()
+                });
+
+                const newBalance = currentBalance - amt;
+                await set(ref(db, `users/${userId}/balance`), newBalance);
+
+                alert("Success! Request sent.");
+                document.getElementById('withAmount').value = "";
+                checkInput();
+            } catch (e) { alert("Error!"); }
+        };
+
+        window.toggleHistory = (show) => {
+            document.getElementById('historyModal').style.display = show ? 'block' : 'none';
+            if(show) fetchHistory();
+        };
+
+        function fetchHistory() {
+            const historyContent = document.getElementById('historyContent');
+            onValue(ref(db, 'withdrawals'), (snap) => {
+                historyContent.innerHTML = "";
+                let found = false;
+                snap.forEach((child) => {
+                    const data = child.val();
+                    if(data.uid === userId) {
+                        found = true;
+                        const statusClass = `status-${(data.status || 'pending').toLowerCase()}`;
+                        historyContent.innerHTML += `
+                            <div class="history-card">
+                                <div class="hist-flex">
+                                    <span style="font-weight:bold; color:var(--text-gold);">₹${parseFloat(data.amount).toFixed(2)}</span>
+                                    <span class="${statusClass}">${(data.status || 'PENDING').toUpperCase()}</span>
+                                </div>
+                                <div style="font-size:11px; color:#888;">${data.date}</div>
+                            </div>`;
+                    }
+                });
+                if(!found) historyContent.innerHTML = '<div style="text-align:center; padding:50px; color:#888;">No history</div>';
+            });
+        }
+
+        window.checkInput = () => {
+            const amt = document.getElementById('withAmount').value;
+            const btn = document.getElementById('submitBtn');
+            document.getElementById('receivedAmt').innerText = amt ? `₹${parseFloat(amt).toFixed(2)}` : "₹0.00";
+            
+            if(amt >= 200 && amt <= currentBalance && upiAdded) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        };
+
+        window.withdrawAll = () => {
+            document.getElementById('withAmount').value = Math.floor(currentBalance);
+            checkInput();
+        };
+    </script>
+</body>
+</html>

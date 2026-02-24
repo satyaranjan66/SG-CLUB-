@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Activity</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-gray: #22272b;
+            --gold: #d4af37;
+            --gold-grad: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --light-gray: #76808f;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg-black); 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 80px; 
+        }
+
+        .activity-header {
+            background: var(--gold-grad);
+            padding: 30px 20px;
+            color: #4e342e;
+            text-align: center;
+        }
+        .activity-header h2 { margin: 0; font-size: 24px; }
+        .activity-header p { margin: 5px 0 0; font-size: 14px; opacity: 0.8; }
+
+        .activity-container { padding: 15px; }
+
+        .act-card {
+            background: var(--card-gray);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+        .act-card img { width: 100%; height: 140px; object-fit: cover; }
+        .act-info { padding: 15px; }
+        .act-info h3 { margin: 0; font-size: 16px; color: var(--gold); }
+        .act-info p { margin: 5px 0 0; font-size: 12px; color: var(--light-gray); }
+
+        .gift-box {
+            background: var(--card-gray);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+        }
+        .gift-box input {
+            width: 85%;
+            background: #1a1d20;
+            border: 1px solid var(--gold);
+            padding: 12px;
+            border-radius: 25px;
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .claim-btn {
+            background: var(--gold-grad);
+            border: none;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #4e342e;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #1a1d20;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+            z-index: 1000;
+        }
+        .nav-tab { text-align: center; text-decoration: none; color: var(--light-gray); font-size: 11px; flex: 1; }
+        .nav-tab.active { color: var(--gold); }
+        .nav-tab img { width: 22px; margin-bottom: 4px; display: block; margin: 0 auto 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="activity-header">
+        <h2>Activity</h2>
+        <p>Complete tasks and earn big rewards</p>
+    </div>
+
+    <div class="activity-container">
+        
+        <div class="gift-box">
+            <h3 style="margin-top:0; color:var(--gold);">Redeem Gift Code</h3>
+            <input type="text" id="giftInput" placeholder="Please enter the gift code">
+            <br>
+            <button class="claim-btn" onclick="redeemCode()">Claim Reward</button>
+        </div>
+
+        <div class="act-card" onclick="checkLock()">
+            <img src="https://img.freepik.com/free-vector/golden-coins-falling-background_1017-23456.jpg">
+            <div class="act-info">
+                <h3>Daily Check-in Bonus</h3>
+                <p>Login every day to get ₹10 - ₹100 daily.</p>
+            </div>
+        </div>
+
+        <div class="act-card" onclick="checkLock()">
+            <img src="https://img.freepik.com/free-vector/online-casino-shining-banner-with-slot-machine-golden-coins_1284-54019.jpg">
+            <div class="act-info">
+                <h3>First Deposit Bonus</h3>
+                <p>Get 100% extra bonus on your first recharge.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="nav-bar">
+        <a href="home.html" class="nav-tab"><img src="home.png">Home</a>
+        <a href="activity.html" class="nav-tab active"><img src="activity.png">Activity</a>
+        <a href="promotion.html" class="nav-tab">
+            <div style="background:var(--gold); width:40px; height:40px; border-radius:50%; margin:-25px auto 5px; display:flex; align-items:center; justify-content:center;">
+                <img src="diamond.png" style="width:25px; margin:0;">
+            </div>Promotion
+        </a>
+        <a href="wallet.html" class="nav-tab"><img src="wallet.png">Wallet</a>
+        <a href="account.html" class="nav-tab"><img src="account.png">Account</a>
+    </nav>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+        authDomain: "sg-club-66003.firebaseapp.com",
+        projectId: "sg-club-66003",
+        storageBucket: "sg-club-66003.firebasestorage.app",
+        messagingSenderId: "538659001804",
+        appId: "1:538659001804:web:1245dcae38071d1949b969"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userId = localStorage.getItem("userLoggedIn");
+
+    window.checkLock = async () => {
+        if(!userId) return alert("Please Login First!");
+        const snap = await get(ref(db, 'users/' + userId));
+        if(snap.exists()){
+            const user = snap.val();
+            if(!user.isActivated){
+                alert("Please make your first deposit to unlock Activity Rewards!");
+                window.location.href = "deposit.html";
+            } else {
+                alert("Today's task is already completed or coming soon!");
+            }
+        }
+    };
+
+    window.redeemCode = async () => {
+        const codeInput = document.getElementById('giftInput').value.trim();
+        if(!codeInput) return alert("Please enter a code");
+
+        // 1. Check User & Activation
+        const userSnap = await get(ref(db, 'users/' + userId));
+        if(!userSnap.exists()) return alert("User not found!");
+        const user = userSnap.val();
+
+        if(!user.isActivated){
+            alert("Only active members (after first deposit) can use gift codes!");
+            return;
+        }
+
+        // 2. Check if user has already used THIS specific code
+        const usedCheckSnap = await get(ref(db, `used_codes/${userId}/${codeInput}`));
+        if(usedCheckSnap.exists()){
+            alert("You have already redeemed this code once!");
+            return;
+        }
+
+        // 3. Check if the code exists in Admin's gift_codes
+        const giftSnap = await get(ref(db, 'gift_codes/' + codeInput));
+        if(giftSnap.exists()){
+            const giftData = giftSnap.val();
+            const bonus = parseFloat(giftData.price);
+
+            // 4. Update Balance
+            let newBal = (user.balance || 0) + bonus;
+            await update(ref(db, 'users/' + userId), { balance: newBal });
+
+            // 5. Mark this code as USED for this specific user
+            await set(ref(db, `used_codes/${userId}/${codeInput}`), {
+                redeemedAt: new Date().toLocaleString(),
+                amount: bonus
+            });
+
+            alert(`Success! ₹${bonus} added to your wallet.`);
+            document.getElementById('giftInput').value = "";
+        } else {
+            // Agar purana hardcoded code SG777 check karna ho toh
+            if(codeInput === "SG777") {
+                 alert("This is an old code. Please use codes generated from Admin Panel.");
+            } else {
+                 alert("Invalid or Expired Code!");
+            }
+        }
+    };
+</script>
+</body>
+</html>

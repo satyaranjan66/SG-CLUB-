@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Forgot Password - SG CLUB</title>
+    <style>
+        :root {
+            --bg-deep: #18191b;
+            --input-bg: #333333;
+            --text-gold: #d4af37;
+            --btn-gold: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-deep);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .forgot-box {
+            width: 90%;
+            max-width: 380px;
+            background: #22272b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        h2 { color: var(--text-gold); margin-bottom: 10px; }
+        p { color: #888; font-size: 14px; margin-bottom: 25px; }
+
+        .input-box {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-box input {
+            background: none;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .btn-action {
+            background: var(--btn-gold);
+            color: #4e342e;
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            font-size: 13px;
+            min-height: 20px;
+        }
+
+        #step2 { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="forgot-box">
+        <h2>Reset Password</h2>
+        <p>Verify your mobile to set a new password</p>
+
+        <div id="step1">
+            <div class="input-box">
+                <input type="number" id="phone" placeholder="Enter Registered Mobile">
+            </div>
+            <button class="btn-action" id="sendBtn" onclick="sendOTP()">Send OTP</button>
+        </div>
+
+        <div id="step2">
+            <div class="input-box">
+                <input type="number" id="otpInput" placeholder="Enter 6-Digit OTP">
+            </div>
+            <div class="input-box">
+                <input type="password" id="newPass" placeholder="Set New Password">
+            </div>
+            <button class="btn-action" onclick="verifyAndReset()">Verify & Update</button>
+        </div>
+
+        <div id="msg" class="status-msg"></div>
+        
+        <a href="login.html" style="color:var(--text-gold); text-decoration:none; font-size:13px; display:block; margin-top:20px;">Back to Login</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            databaseURL: "https://sg-club-66003-default-rtdb.firebaseio.com",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let generatedOTP;
+        // Yahan apni Fast2SMS API Key dalein
+        const FAST2SMS_API_KEY = "WZ1MOqLb4wUSiNBRCQePYmntzdlcFyX7GHIrujE6D0JKhsv9ofSoaDJqYUvZg4BdTh7FxVuMkpejy5H3"; 
+
+        // 1. Send OTP Function
+        window.sendOTP = async () => {
+            const mobile = document.getElementById('phone').value.trim();
+            const msg = document.getElementById('msg');
+            const sendBtn = document.getElementById('sendBtn');
+
+            if(mobile.length < 10) return alert("Enter 10 digit mobile number");
+
+            // Check if user exists in Database
+            const userRef = ref(db, 'users/' + mobile);
+            const snap = await get(userRef);
+
+            if(!snap.exists()) {
+                msg.innerText = "User not registered!";
+                msg.style.color = "#ff5252";
+                return;
+            }
+
+            // Create 6 Digit OTP
+            generatedOTP = Math.floor(100000 + Math.random() * 900000);
+
+            // Fast2SMS API URL
+            const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_API_KEY}&route=otp&variables_values=${generatedOTP}&numbers=${mobile}`;
+
+            try {
+                sendBtn.disabled = true;
+                sendBtn.innerText = "Sending...";
+                
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if(result.return) {
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'block';
+                    msg.innerText = "OTP sent successfully to " + mobile;
+                    msg.style.color = "#4caf50";
+                } else {
+                    alert("Error: " + result.message);
+                    sendBtn.disabled = false;
+                    sendBtn.innerText = "Send OTP";
+                }
+            } catch (err) {
+                alert("Failed to connect to SMS server.");
+                sendBtn.disabled = false;
+            }
+        };
+
+        // 2. Verify and Reset Function
+        window.verifyAndReset = async () => {
+            const userOTP = document.getElementById('otpInput').value;
+            const newPassword = document.getElementById('newPass').value;
+            const mobile = document.getElementById('phone').value;
+
+            if(userOTP != generatedOTP) {
+                alert("Invalid OTP! Please try again.");
+                return;
+            }
+
+            if(newPassword.length < 6) {
+                alert("Password must be at least 6 characters.");
+                return;
+            }
+
+            // Update Password in Firebase
+            try {
+                await update(ref(db, 'users/' + mobile), {
+                    password: newPassword
+                });
+                alert("Success! Password updated.");
+                window.location.href = "login.html";
+            } catch (error) {
+                alert("Database Error: " + error.message);
+            }
+        };
+    </script>
+</body>
+</html>

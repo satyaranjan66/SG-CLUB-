@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Popular - SG CLUB</title>
+    <style>
+        :root {
+            --bg-dark: #0f1214;
+            --card-bg: #22272b;
+            --gold-grad: linear-gradient(135deg, #f7dfa5 0%, #d4af37 100%);
+            --text-gold: #d4af37;
+            --orange: #ff9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            margin: 0;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .header .title { font-size: 18px; font-weight: bold; margin-left: 15px; }
+        .back-btn { font-size: 24px; text-decoration: none; color: white; cursor: pointer; }
+
+        /* Banner Slider (Static) */
+        .banner-container {
+            margin: 15px;
+            height: 140px;
+            background: var(--gold-grad);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .banner-text h2 { margin: 0; font-size: 20px; color: #4e342e; }
+        .banner-text p { margin: 5px 0 0; font-size: 12px; color: #5d4037; font-weight: bold; }
+        .banner-img { width: 100px; transform: rotate(-10deg); }
+
+        /* Section Label */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            margin: 20px 0 10px;
+        }
+        .section-header h3 { margin: 0; font-size: 16px; border-left: 3px solid var(--text-gold); padding-left: 10px; }
+
+        /* Popular Games Grid */
+        .popular-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 15px;
+        }
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            position: relative;
+        }
+        .game-img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            background: #1a1d20;
+        }
+        .hot-tag {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: red;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0.6; } }
+
+        .game-info { padding: 10px; text-align: center; }
+        .game-name { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .play-btn {
+            display: block;
+            background: var(--gold-grad);
+            color: #4e342e;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+
+        /* Top Winners List */
+        .winners-box {
+            margin: 15px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 10px;
+        }
+        .winner-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .winner-item:last-child { border: none; }
+        .winner-left { display: flex; align-items: center; gap: 10px; }
+        .winner-left img { width: 35px; height: 35px; border-radius: 50%; background: #444; }
+        .winner-name { font-size: 13px; font-weight: 500; }
+        .win-amt { color: #4caf50; font-weight: bold; font-size: 14px; }
+
+        /* Footer Nav (Optional) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; width: 100%;
+            background: #1a1d20;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+        }
+        .nav-item { color: #888; text-decoration: none; font-size: 11px; text-align: center; }
+        .nav-item.active { color: var(--text-gold); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="javascript:history.back()" class="back-btn">‹</a>
+        <div class="title">Popular Games</div>
+    </div>
+
+    <div class="banner-container">
+        <div class="banner-text">
+            <h2>Win Go - Hot!</h2>
+            <p>Every minute is a chance to win.</p>
+        </div>
+        <img src="win_go_logo.png" class="banner-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2619/2619245.png'">
+    </div>
+
+    <div class="section-header">
+        <h3>Top Rated</h3>
+    </div>
+
+    <div class="popular-grid">
+        <div class="game-card">
+            <div class="hot-tag">HOT</div>
+            <img src="wingo_bg.png" class="game-img" onerror="this.src='https://img.freepik.com/free-vector/colorful-gradient-abstract-background_23-2149133319.jpg'">
+            <div class="game-info">
+                <div class="game-name">Win Go 1Min</div>
+                <a href="wingo.html" class="play-btn">PLAY NOW</a>
+            </div>
+        </div>
+        <div class="game-card">
+            <img src="trx_bg.png" class="game-img" onerror="this.src='https://img.freepik.com/free-vector/modern-abstract-background-design_23-2148750275.jpg'">
+            <div class="game-info">
+                <div class="game-name">TRX Hash</div>
+                <a href="#" class="play-btn">PLAY NOW</a>
+            </div>
+        </div>
+        <div class="game-card">
+            <img src="k3_bg.png" class="game-img" onerror="this.src='https://img.freepik.com/free-vector/gradient-geometric-shape-background_23-2148902517.jpg'">
+            <div class="game-info">
+                <div class="game-name">K3 Lotre</div>
+                <a href="#" class="play-btn">PLAY NOW</a>
+            </div>
+        </div>
+        <div class="game-card">
+            <div class="hot-tag" style="background: orange;">NEW</div>
+            <img src="5d_bg.png" class="game-img" onerror="this.src='https://img.freepik.com/free-vector/wave-background-gradient-colors_23-2149120131.jpg'">
+            <div class="game-info">
+                <div class="game-name">5D Lotre</div>
+                <a href="#" class="play-btn">PLAY NOW</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h3>Top Winners</h3>
+    </div>
+
+    <div class="winners-box">
+        <div class="winner-item">
+            <div class="winner-left">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=1">
+                <div class="winner-name">Mem***r62</div>
+            </div>
+            <div class="win-amt">+₹1,450.00</div>
+        </div>
+        <div class="winner-item">
+            <div class="winner-left">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=5">
+                <div class="winner-name">User***01</div>
+            </div>
+            <div class="win-amt">+₹8,200.00</div>
+        </div>
+        <div class="winner-item">
+            <div class="winner-left">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=9">
+                <div class="winner-name">Aman***12</div>
+            </div>
+            <div class="win-amt">+₹450.00</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div style="font-size: 18px;">🏠</div>
+            Home
+        </a>
+        <a href="popular.html" class="nav-item active">
+            <div style="font-size: 18px;">🔥</div>
+            Popular
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <div style="font-size: 18px;">👛</div>
+            Wallet
+        </a>
+        <a href="account.html" class="nav-item">
+            <div style="font-size: 18px;">👤</div>
+            Account
+        </a>
+    </div>
+
+</body>
+</html>

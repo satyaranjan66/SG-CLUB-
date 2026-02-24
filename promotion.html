@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Promotion</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-gray: #22272b;
+            --gold: #d4af37;
+            --gold-grad: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --light-gray: #76808f;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-black); color: white; margin: 0; padding-bottom: 80px; }
+
+        /* Header Section */
+        .promo-header { background: var(--gold-grad); padding: 30px 20px; color: #4e342e; text-align: center; }
+        .promo-header h2 { margin: 0; font-size: 24px; }
+        .commission-box { background: rgba(0,0,0,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; font-weight: bold; }
+
+        .container { padding: 15px; }
+
+        /* Statistics Cards */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card-gray); padding: 15px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .stat-card h4 { margin: 0; font-size: 12px; color: var(--light-gray); }
+        .stat-card p { margin: 5px 0 0; font-size: 18px; color: var(--gold); font-weight: bold; }
+
+        /* Invite Section */
+        .invite-card { background: var(--card-gray); padding: 20px; border-radius: 15px; border: 1px solid var(--gold); text-align: center; }
+        .invite-card h3 { margin: 0 0 10px; color: var(--gold); }
+        .ref-code { font-size: 22px; letter-spacing: 2px; font-weight: 900; margin: 10px 0; display: block; }
+        
+        .copy-btn { background: var(--gold-grad); border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; color: #4e342e; cursor: pointer; width: 100%; margin-top: 10px; }
+
+        /* Levels Info */
+        .levels-table { width: 100%; background: var(--card-gray); border-radius: 12px; margin-top: 20px; overflow: hidden; border: 1px solid #333; }
+        .level-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #333; }
+        .level-row:last-child { border-bottom: none; }
+
+        /* Nav Bar */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #1a1d20; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; }
+        .nav-tab { text-align: center; text-decoration: none; color: var(--light-gray); font-size: 11px; flex: 1; }
+        .nav-tab.active { color: var(--gold); }
+        .nav-tab img { width: 22px; margin-bottom: 4px; display: block; margin: 0 auto 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="promo-header">
+        <h2>Promotion</h2>
+        <div class="commission-box">
+            Yesterday's Total Commission: ₹<span id="yesterdayComm">0.00</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Direct Subordinates</h4>
+                <p id="directCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Total Team</h4>
+                <p id="totalTeam">0</p>
+            </div>
+        </div>
+
+        <div class="invite-card">
+            <h3>Invite Friends</h3>
+            <p style="font-size: 12px; color: var(--light-gray);">Share your link and earn 3-level commission</p>
+            <span class="ref-code" id="myRefCode">Loading...</span>
+            <button class="copy-btn" onclick="copyInviteLink()">Copy Invitation Link</button>
+        </div>
+
+        <div class="levels-table">
+            <div class="level-row">
+                <span><b>Level 1</b> (Direct)</span>
+                <span id="lvl1Comm" style="color:var(--gold)">₹0.00</span>
+            </div>
+            <div class="level-row">
+                <span><b>Level 2</b> (Sub)</span>
+                <span id="lvl2Comm" style="color:var(--gold)">₹0.00</span>
+            </div>
+            <div class="level-row">
+                <span><b>Level 3</b> (Indirect)</span>
+                <span id="lvl3Comm" style="color:var(--gold)">₹0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="home.html" class="nav-tab"><img src="home.png">Home</a>
+        <a href="activity.html" class="nav-tab"><img src="activity.png">Activity</a>
+        <a href="promotion.html" class="nav-tab active">
+            <div style="background:var(--gold); width:40px; height:40px; border-radius:50%; margin:-25px auto 5px; display:flex; align-items:center; justify-content:center;">
+                <img src="diamond.png" style="width:25px; margin:0;">
+            </div>Promotion
+        </a>
+        <a href="wallet.html" class="nav-tab"><img src="wallet.png">Wallet</a>
+        <a href="account.html" class="nav-tab"><img src="account.png">Account</a>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const userId = localStorage.getItem("userLoggedIn");
+
+        if(!userId) window.location.href = "login.html";
+
+        // Display Referral ID
+        document.getElementById('myRefCode').innerText = userId;
+
+        // Copy Link Function
+        window.copyInviteLink = () => {
+            const domain = window.location.origin;
+            const inviteUrl = `${domain}/register.html?invite=${userId}`;
+            navigator.clipboard.writeText(inviteUrl).then(() => {
+                alert("Invitation link copied to clipboard!");
+            });
+        };
+
+        // Load Promotion Stats
+        onValue(ref(db, 'users/' + userId), (snap) => {
+            if(snap.exists()){
+                const data = snap.val();
+                document.getElementById('directCount').innerText = data.directSubordinates || 0;
+                document.getElementById('totalTeam').innerText = data.totalTeamSize || 0;
+                
+                // Commissions (Agar aapne calculate kar rakhe hain toh)
+                document.getElementById('lvl1Comm').innerText = "₹" + (data.level1Comm || 0).toFixed(2);
+                document.getElementById('lvl2Comm').innerText = "₹" + (data.level2Comm || 0).toFixed(2);
+                document.getElementById('lvl3Comm').innerText = "₹" + (data.level3Comm || 0).toFixed(2);
+            }
+        });
+
+    </script>
+</body>
+</html>

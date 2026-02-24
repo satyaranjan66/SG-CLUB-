@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Wallet</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-dark: #22272b;
+            --gold-grad: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --text-gold: #d4af37;
+            --text-gray: #76808f;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg-black); 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 80px; 
+        }
+
+        /* Top Header */
+        .wallet-top {
+            background: var(--gold-grad);
+            padding: 40px 20px;
+            text-align: center;
+            color: #4e342e;
+            position: relative;
+        }
+        .wallet-top .back-btn { position: absolute; left: 15px; top: 15px; font-size: 24px; cursor: pointer; font-weight: bold; }
+        .total-balance { font-size: 30px; font-weight: bold; margin: 5px 0; }
+
+        /* Main Card Container */
+        .main-container {
+            background: var(--card-dark);
+            margin: -20px 15px 0;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Progress Circles Section */
+        .circles-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .circle-box { text-align: center; }
+        .circle {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            border: 5px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .circle.gold { border-color: var(--text-gold); color: var(--text-gold); }
+        .circle-val { font-size: 13px; font-weight: bold; }
+        .circle-label { font-size: 11px; color: var(--text-gray); }
+
+        /* Transfer Button */
+        .transfer-btn {
+            background: var(--gold-grad);
+            color: #4e342e;
+            text-align: center;
+            padding: 12px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        /* Icon Grid */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .icon-item { cursor: pointer; text-decoration: none; }
+        .icon-item img { width: 35px; height: 35px; margin-bottom: 5px; }
+        .icon-item span { display: block; font-size: 11px; color: var(--text-gold); }
+
+        /* Game Balance Grid */
+        .game-balance-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px 15px;
+        }
+        .game-card {
+            background: #1a1d20;
+            padding: 15px 5px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        .game-card.active { background: var(--gold-grad); color: #4e342e; border: none; }
+        .game-card .val { font-size: 12px; font-weight: bold; }
+        .game-card .name { font-size: 11px; margin-top: 4px; opacity: 0.8; }
+
+        /* Bottom Nav */
+        .nav-bar {
+            position: fixed; bottom: 0; width: 100%;
+            background: #1a1d20; display: flex;
+            justify-content: space-around; padding: 10px 0;
+            border-top: 1px solid #333;
+            z-index: 100;
+        }
+        .nav-tab { text-align: center; text-decoration: none; color: var(--text-gray); font-size: 11px; flex: 1; }
+        .nav-tab.active { color: var(--text-gold); }
+        .nav-tab img { width: 22px; display: block; margin: 0 auto 4px; }
+
+        /* --- History Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-black);
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex; align-items: center; padding: 15px;
+            background: var(--card-dark); position: sticky; top: 0;
+        }
+        .history-item {
+            background: var(--card-dark);
+            margin: 10px 15px;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--text-gold);
+        }
+        .h-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .status-pending { color: #ff9800; }
+        .status-success { color: #4caf50; }
+        .status-reject { color: #f44336; }
+    </style>
+</head>
+<body>
+
+    <div class="wallet-top">
+        <span class="back-btn" onclick="window.location.href='home.html'">‹</span>
+        <div style="font-size: 18px; font-weight: bold;">Wallet</div>
+        <img src="withdraw.png" style="width: 40px; margin-top:15px;">
+        <div class="total-balance" id="mainBal">₹0.00</div>
+        <div style="font-size: 12px; opacity: 0.8;">Total balance</div>
+    </div>
+
+    <div class="main-container">
+        <div class="circles-row">
+            <div class="circle-box">
+                <div class="circle gold">100%</div>
+                <div class="circle-val" id="innerMainBal">₹0.00</div>
+                <div class="circle-label">Main wallet</div>
+            </div>
+            <div class="circle-box">
+                <div class="circle">0%</div>
+                <div class="circle-val">₹0.00</div>
+                <div class="circle-label">3rd party wallet</div>
+            </div>
+        </div>
+
+        <div class="transfer-btn" onclick="location.reload()">Main wallet transfer</div>
+
+        <div class="icon-grid">
+            <a href="deposit.html" class="icon-item">
+                <img src="dep.png"><span>Deposit</span>
+            </a>
+            <a href="withdraw.html" class="icon-item">
+                <img src="wd.png"><span>Withdraw</span>
+            </a>
+            <div class="icon-item" onclick="openHistory('deposits')">
+                <img src="rh.png"><span>Deposit history</span>
+            </div>
+            <div class="icon-item" onclick="openHistory('withdrawals')">
+                <img src="rh.png"><span>Withdrawal history</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-balance-grid">
+        <div class="game-card active"><div class="val" id="lotteryBal">0.00</div><div class="name">Lottery</div></div>
+        <div class="game-card"><div class="val">0.00</div><div class="name">TB_Chess</div></div>
+        <div class="game-card"><div class="val">0.00</div><div class="name">CQ9</div></div>
+        <div class="game-card"><div class="val">0.00</div><div class="name">MG</div></div>
+        <div class="game-card"><div class="val">0.00</div><div class="name">JDB</div></div>
+        <div class="game-card"><div class="val">0.00</div><div class="name">CMD</div></div>
+    </div>
+
+    <div id="historyModal" class="modal">
+        <div class="modal-header">
+            <span style="font-size: 24px; cursor: pointer;" onclick="closeHistory()">‹</span>
+            <div id="modalTitle" style="flex:1; text-align:center; font-weight:bold; font-size:18px;">History</div>
+        </div>
+        <div id="historyList"></div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="home.html" class="nav-tab"><img src="home.png">Home</a>
+        <a href="activity.html" class="nav-tab"><img src="activity.png">Activity</a>
+        <a href="promotion.html" class="nav-tab">
+            <div style="background:var(--text-gold); width:40px; height:40px; border-radius:50%; margin:-25px auto 5px; display:flex; align-items:center; justify-content:center;">
+                <img src="diamond.png" style="width:25px; margin:0;">
+            </div>Promotion
+        </a>
+        <a href="wallet.html" class="nav-tab active"><img src="wallet.png">Wallet</a>
+        <a href="account.html" class="nav-tab"><img src="account.png">Account</a>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const userId = localStorage.getItem("userLoggedIn");
+
+        if (!userId) {
+            window.location.href = "login.html";
+        } else {
+            onValue(ref(db, 'users/' + userId), (snap) => {
+                if(snap.exists()){
+                    const bal = snap.val().balance || 0;
+                    const formatted = "₹" + bal.toFixed(2);
+                    document.getElementById('mainBal').innerText = formatted;
+                    document.getElementById('innerMainBal').innerText = formatted;
+                    document.getElementById('lotteryBal').innerText = bal.toFixed(2);
+                }
+            });
+        }
+
+        window.openHistory = (type) => {
+            const modal = document.getElementById('historyModal');
+            const title = document.getElementById('modalTitle');
+            const list = document.getElementById('historyList');
+            modal.style.display = "block";
+            title.innerText = type === 'deposits' ? "Deposit History" : "Withdrawal History";
+            list.innerHTML = "<p style='text-align:center; margin-top:50px;'>Loading...</p>";
+
+            onValue(ref(db, type), (snap) => {
+                list.innerHTML = "";
+                let found = false;
+                snap.forEach((child) => {
+                    const data = child.val();
+                    if(data.uid === userId || data.mobile === userId) {
+                        found = true;
+                        const statusClass = `status-${(data.status || 'pending').toLowerCase()}`;
+                        list.innerHTML += `
+                            <div class="history-item">
+                                <div class="h-row">
+                                    <span style="font-weight:bold; color:var(--text-gold);">₹${parseFloat(data.amount).toFixed(2)}</span>
+                                    <span class="${statusClass}">${data.status || 'Pending'}</span>
+                                </div>
+                                <div style="font-size:11px; color:var(--text-gray);">${data.date || ''}</div>
+                                <div style="font-size:12px; margin-top:5px;">ID: ${child.key}</div>
+                            </div>`;
+                    }
+                });
+                if(!found) list.innerHTML = "<p style='text-align:center; margin-top:50px; color:#888;'>No records found.</p>";
+            });
+        };
+
+        window.closeHistory = () => { document.getElementById('historyModal').style.display = "none"; };
+    </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - SG CLUB</title>
+    <style>
+        :root {
+            --bg-dark: #2c3135;
+            --input-bg: #3c444a;
+            --text-gold: #d4af37;
+            --gold-grad: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --tab-inactive: #666;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(to bottom, #4a535a 0%, #1a1d20 100%);
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Top Header Area */
+        .top-header {
+            padding: 30px 20px 10px;
+        }
+        .top-header h1 { font-size: 20px; margin: 0; }
+        .top-header p { font-size: 12px; color: #ccc; margin-top: 5px; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #444;
+            margin-bottom: 25px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 14px;
+            color: var(--tab-inactive);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .tab.active {
+            color: var(--text-gold);
+            border-bottom: 2px solid var(--text-gold);
+        }
+        .tab img { width: 22px; filter: grayscale(1); }
+        .tab.active img { filter: grayscale(0); }
+
+        /* Form Content */
+        .login-form { padding: 0 20px; }
+
+        .label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; color: #fff; }
+        .label-row img { width: 18px; }
+
+        .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .country-select {
+            background: var(--input-bg);
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 60px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .input-box {
+            background: var(--input-bg);
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .input-box input {
+            background: none;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .remember-pass {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #aaa;
+            margin: 15px 0 25px;
+        }
+        .remember-pass input { accent-color: var(--text-gold); width: 18px; height: 18px; }
+
+        /* Buttons */
+        .btn-login {
+            background: var(--gold-grad);
+            color: #4e342e;
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .btn-register {
+            background: none;
+            border: 1px solid var(--text-gold);
+            color: var(--text-gold);
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 16px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Footer Icons */
+        .footer-icons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: auto;
+            padding-bottom: 30px;
+        }
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .icon-item img { width: 25px; }
+
+        /* Floating Chat Icon */
+        .floating-chat {
+            position: fixed;
+            right: 15px;
+            bottom: 120px;
+            width: 50px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-header">
+        <h1>Log in</h1>
+        <p>Please log in with your phone number or email<br>If you forget your password, please contact customer service</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active">
+            <img src="https://cdn-icons-png.flaticon.com/512/3616/3616215.png" style="width:20px;">
+            Log in with phone
+        </div>
+        <div class="tab" onclick="alert('Email login coming soon!')">
+            <img src="https://cdn-icons-png.flaticon.com/512/542/542689.png" style="width:20px;">
+            Email Login
+        </div>
+    </div>
+
+    <div class="login-form">
+        <div class="label-row">📱 Phone number</div>
+        <div class="input-row">
+            <div class="country-select">+91 ⌵</div>
+            <div class="input-box">
+                <input type="number" id="loginMobile" placeholder="Please enter the phone number">
+            </div>
+        </div>
+
+        <div class="label-row">🔒 Password</div>
+        <div class="input-box">
+            <input type="password" id="loginPass" placeholder="Password">
+            <img src="https://cdn-icons-png.flaticon.com/512/2767/2767146.png" style="width:18px; opacity:0.5;">
+        </div>
+
+        <div class="remember-pass">
+            <input type="checkbox"> Remember password
+        </div>
+
+        <button class="btn-login" onclick="handleLogin()">Log in</button>
+        <a href="index.html" class="btn-register">Register</a>
+    </div>
+
+    <div class="footer-icons">
+        <div class="icon-item" onclick="alert('Contact Admin for reset')">
+            <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png">
+            Forgot password
+        </div>
+        <div class="icon-item" onclick="alert('Opening Live Chat...')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067566.png">
+            Customer Service
+        </div>
+    </div>
+
+    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384005.png" class="floating-chat">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+            authDomain: "sg-club-66003.firebaseapp.com",
+            projectId: "sg-club-66003",
+            storageBucket: "sg-club-66003.firebasestorage.app",
+            messagingSenderId: "538659001804",
+            appId: "1:538659001804:web:1245dcae38071d1949b969"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.handleLogin = async () => {
+            const mobile = document.getElementById('loginMobile').value;
+            const pass = document.getElementById('loginPass').value;
+
+            if(!mobile || !pass) return alert("Please fill all fields");
+
+            const userRef = ref(db, 'users/' + mobile);
+            const snapshot = await get(userRef);
+
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                if (userData.password === pass) {
+                    localStorage.setItem("userLoggedIn", mobile);
+                    alert("Login Successful!");
+                    window.location.href = "home.html";
+                } else {
+                    alert("Incorrect Password!");
+                }
+            } else {
+                alert("Account not found. Please register.");
+            }
+        };
+    </script>
+</body>
+</html>

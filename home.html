@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SG CLUB - Home</title>
+    <style>
+        :root {
+            --bg-black: #0f1214;
+            --card-gold: #f7dfa5;
+            --dark-gold: #d4af37;
+            --light-gray: #76808f;
+            --tab-inactive: #1e2327;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg-black); 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 80px; 
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+        }
+        .user-balance-head { color: var(--card-gold); font-weight: bold; font-size: 14px; }
+        .header-right { display: flex; gap: 15px; }
+      .header-icon {
+    width: 25px; /* Aapke icon ka size */
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.header-icon:active {
+    transform: scale(0.9); /* Click karne par chota hoga */
+}
+        /* Banner Slider */
+        .banner {
+            margin: 0 15px;
+            height: 160px;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('banner_bg.jpg'); 
+            background-size: cover;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 20px;
+            border: 1px solid #333;
+        }
+        .banner h2 { color: #f7dfa5; margin: 0; font-size: 22px; }
+        .banner p { color: white; margin: 5px 0; font-size: 14px; }
+
+        /* Notice Bar */
+        .notice {
+            background: #22272b;
+            margin: 15px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: var(--card-gold);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 15px;
+        }
+        .grid-item {
+            background: #22272b;
+            border-radius: 12px;
+            padding: 15px 5px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+        .grid-item img { width: 50px; height: 50px; margin-bottom: 8px; }
+        .grid-item span { display: block; font-size: 13px; font-weight: 500; }
+
+        /* Lottery Section */
+        .section-header {
+            padding: 20px 15px 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--card-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-header::before {
+            content: "";
+            width: 4px;
+            height: 18px;
+            background: var(--dark-gold);
+            display: block;
+        }
+
+        .win-go-card {
+            background: linear-gradient(90deg, #f7dfa5 0%, #d4af37 100%);
+            margin: 0 15px;
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #4e342e;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .win-go-info h3 { margin: 0; font-size: 20px; }
+        .win-go-info p { margin: 5px 0 0; font-size: 12px; opacity: 0.8; }
+        .win-go-icon { width: 60px; }
+
+        /* Bottom Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #1a1d20;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+        }
+        .nav-tab {
+            text-align: center;
+            text-decoration: none;
+            color: var(--light-gray);
+            font-size: 11px;
+            flex: 1;
+            cursor: pointer;
+        }
+        .nav-tab.active { color: var(--card-gold); }
+        .nav-tab img { width: 22px; margin-bottom: 4px; display: block; margin: 0 auto 4px; }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-gold);
+            color: #4e342e;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+        .game{
+             font-family: Bold;
+             font-size: 50;
+}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="game">SG Club</div>
+        <div class="user-balance-head" id="userBalanceHead">Balance: ₹0.00</div>
+        <div class="header-right">
+
+<a href="download.html">
+    <img src="download.png" class="header-icon" alt="Download">
+</a>
+        </div>
+    </div>
+
+    <div class="banner">
+        <h2>VIP Upgrade Bonus</h2>
+        <p>Monthly VIP Bonus</p>
+        <p>Special Rebates</p>
+    </div>
+
+    <div class="notice">
+        <span>📢</span>
+        <marquee scrollamount="5">Please Remember The Upi Id Of Your Payment And Fill In The Correct Utr Number...</marquee>
+    </div>
+
+    <div class="main-grid">
+        <div class="grid-item" onclick="handleGameClick()">
+            <img src="popular.png">
+            <span>Popular</span>
+        </div>
+        <div class="grid-item" onclick="handleGameClick()">
+            <img src="lottery.png">
+            <span>Lottery</span>
+        </div>
+        <div class="grid-item" onclick="handleGameClick()">
+            <img src="slots.png">
+            <span>Slots</span>
+        </div>
+        <div class="grid-item" onclick="handleGameClick()">
+            <img src="sports.png">
+            <span>Sports</span>
+        </div>
+        <div class="grid-item" onclick="handleGameClick()">
+            <img src="casino.png">
+            <span>Casino</span>
+        </div>
+        <div class="grid-item" onclick="handleGameClick()">
+            <img src="rummy.png">
+            <span>Rummy</span>
+        </div>
+    </div>
+
+    <div class="section-header">Lottery</div>
+    
+    <div onclick="handleGameClick()" class="win-go-card">
+        <div class="win-go-info">
+            <h3>Win Go</h3>
+            <p>Guess Number Green/Red/Purple</p>
+        </div>
+        <img src="wingo.png" class="win-go-icon">
+    </div>
+
+    <div class="floating-btn" id="installBtn">
+        <span>SG Club Add to Desktop</span>
+        <span onclick="event.stopPropagation(); document.getElementById('installBtn').style.display='none';" style="opacity:0.6; padding: 5px;">✕</span>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="home.html" class="nav-tab active"><img src="home.png">Home</a>
+        <a href="activity.html" class="nav-tab"><img src="activity.png">Activity</a>
+        <a href="promotion.html" class="nav-tab">
+            <div style="background:var(--card-gold); width:40px; height:40px; border-radius:50%; margin:-25px auto 5px; display:flex; align-items:center; justify-content:center;">
+                <img src="diamond.png" style="width:25px; margin:0;">
+            </div>Promotion
+        </a>
+        <a href="wallet.html" class="nav-tab"><img src="wallet.png">Wallet</a>
+        <a href="account.html" class="nav-tab"><img src="account.png">Account</a>
+    </nav>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+        authDomain: "sg-club-66003.firebaseapp.com",
+        projectId: "sg-club-66003",
+        storageBucket: "sg-club-66003.firebasestorage.app",
+        messagingSenderId: "538659001804",
+        appId: "1:538659001804:web:1245dcae38071d1949b969"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userId = localStorage.getItem("userLoggedIn");
+
+    let isAccountActivated = false;
+
+    if (!userId) {
+        window.location.href = "login.html";
+    } else {
+        onValue(ref(db, 'users/' + userId), (snap) => {
+            if(snap.exists()){
+                const data = snap.val();
+                // Balance ₹20 show karega
+                document.getElementById('userBalanceHead').innerText = "Balance: ₹" + (data.balance || 0).toFixed(2);
+                isAccountActivated = data.isActivated || false; 
+            }
+        });
+    }
+
+    window.handleGameClick = () => {
+        // ₹20 hone par bhi game nahi chalega jab tak isActivated: true na ho
+        if (!isAccountActivated) {
+            alert("Account not active! Please make your first deposit to start playing and use your ₹20 bonus.");
+            window.location.href = "deposit.html";
+        } else {
+            window.location.href = "game.html";
+        }
+    };
+</script>
+
+</body>
+</html>

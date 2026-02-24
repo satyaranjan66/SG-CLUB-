@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Win Go - Professional Firebase</title>
+    <style>
+        :root {
+            --gold-grad: linear-gradient(180deg, #f7dfa5 0%, #d4af37 100%);
+            --dark-bg: #1a1d20;
+            --card-bg: #22272b;
+            --text-gray: #76808f;
+            --big-orange: #ff9800;
+            --small-blue: #2196f3;
+        }
+
+        body { font-family: 'Arial', sans-serif; background-color: var(--dark-bg); color: white; margin: 0; padding-bottom: 50px; }
+
+        /* Wallet Section */
+        .wallet-card { background: var(--gold-grad); margin: 10px; border-radius: 15px; padding: 20px; color: #5d4037; text-align: center; }
+        .balance-amt { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .wallet-btns { display: flex; gap: 10px; justify-content: center; }
+        .w-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(0,0,0,0.1); padding: 8px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; text-decoration: none; color: #5d4037; }
+
+        /* Timer Section */
+        .timer-section { background: var(--gold-grad); margin: 10px; border-radius: 15px; padding: 15px; color: #5d4037; display: flex; justify-content: space-between; align-items: center; }
+        .timer-box { background: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 20px; color: #d4af37; }
+
+        /* Number Grid & BS Row */
+        .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 15px; background: var(--card-bg); margin: 10px 10px 0 10px; border-radius: 15px 15px 0 0; }
+        .num-img { width: 100%; cursor: pointer; transition: 0.1s; }
+        .big-small-row { display: flex; padding: 0 15px 15px 15px; background: var(--card-bg); margin: 0 10px 10px 10px; border-radius: 0 0 15px 15px; gap: 10px; }
+        .bs-btn { flex: 1; padding: 12px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; }
+        .btn-big { background-color: var(--big-orange); border-radius: 25px 0 0 25px; }
+        .btn-small { background-color: var(--small-blue); border-radius: 0 25px 25px 0; }
+
+        /* History Table */
+        .game-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; text-align: center; }
+        .game-table th { color: var(--text-gray); padding: 10px; border-bottom: 1px solid #333; }
+        .game-table td { padding: 12px 10px; border-bottom: 1px solid #222; }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
+
+        /* Pagination Buttons */
+        .pagination { display: flex; justify-content: center; gap: 20px; padding: 20px 0; }
+        .p-btn { background: #22272b; color: white; border: 1px solid #d4af37; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .p-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* BIG DIGITAL TIMER */
+        #bigTimerOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+        }
+        .timer-cards { display: flex; gap: 15px; }
+        .t-card {
+            background: white;
+            color: #ff5252;
+            font-size: 180px;
+            font-weight: 900;
+            padding: 10px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            line-height: 1;
+        }
+
+        /* Result Popup Styling */
+        #resPopup { 
+            display: none; 
+            position: fixed; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 10005; 
+            text-align: center; 
+            width: 320px;
+            animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        #resPopup img { width: 100%; }
+        
+        .res-content-box {
+            position: absolute;
+            top: 37%; left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            color: #333;
+            padding: 15%;
+            font-weight: bold;
+        }
+        #resLotteryInfo { font-size: 16px; margin-bottom: 45px; color: #444; }
+        #resAmt { font-size: 28px; font-weight: 900; margin-bottom: 10px; }
+        #resPeriodInfo { font-size: 14px; margin-top: 40px; color: #666; }
+
+        @keyframes zoomIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+        /* BETTING POPUP */
+        #betModal { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-radius: 20px 20px 0 0; color: #333; z-index: 9999; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9998; }
+        .modal-header { background: var(--big-orange); color: white; padding: 15px; text-align: center; border-radius: 20px 20px 0 0; }
+        .modal-body { padding: 20px; }
+        .bet-row { display: flex; align-items: center; margin-bottom: 15px; font-weight: bold; justify-content: space-between; }
+        .selector-box { display: flex; gap: 5px; }
+        .s-item { background: #f5f5f5; padding: 8px 12px; border-radius: 5px; cursor: pointer; min-width: 40px; text-align: center; }
+        .s-item.active { background: var(--big-orange); color: white; }
+        .qty-ctrl { display: flex; align-items: center; gap: 10px; }
+        .q-btn { background: var(--big-orange); color: white; border: none; width: 30px; height: 30px; border-radius: 5px; font-size: 20px; }
+        .modal-footer { display: flex; }
+        .footer-btn { flex: 1; padding: 15px; border: none; font-weight: bold; font-size: 16px; }
+    </style>
+</head>
+<body onclick="unlockAudio()">
+
+    <audio id="timerAudio" src="timer.mp3" preload="auto"></audio>
+
+    <div id="bigTimerOverlay">
+        <div class="timer-cards">
+            <div class="t-card" id="bigT1">0</div>
+            <div class="t-card" id="bigT2">5</div>
+        </div>
+    </div>
+
+    <div class="wallet-card">
+        <div style="font-size: 14px;">Wallet balance</div>
+        <div class="balance-amt" id="balanceText">₹0.00</div>
+        <div class="wallet-btns">
+            <a href="deposit.html" class="w-btn">Deposit</a>
+            <a href="withdraw.html" class="w-btn">Withdraw</a>
+        </div>
+    </div>
+
+    <div class="timer-section">
+        <div><div style="font-weight: bold;">Win Go 1Min</div><div id="pId" style="font-size: 12px; opacity: 0.8;">Loading...</div></div>
+        <div class="timer-box" id="timeDisp">00:00</div>
+    </div>
+
+    <div class="number-grid" id="numGrid">
+        <img src="0.png" class="num-img" onclick="openBet('0')">
+        <img src="1.png" class="num-img" onclick="openBet('1')">
+        <img src="2.png" class="num-img" onclick="openBet('2')">
+        <img src="3.png" class="num-img" onclick="openBet('3')">
+        <img src="4.png" class="num-img" onclick="openBet('4')">
+        <img src="5.png" class="num-img" onclick="openBet('5')">
+        <img src="6.png" class="num-img" onclick="openBet('6')">
+        <img src="7.png" class="num-img" onclick="openBet('7')">
+        <img src="8.png" class="num-img" onclick="openBet('8')">
+        <img src="9.png" class="num-img" onclick="openBet('9')">
+    </div>
+
+    <div class="big-small-row">
+        <button class="bs-btn btn-big" onclick="openBet('Big')">Big</button>
+        <button class="bs-btn btn-small" onclick="openBet('Small')">Small</button>
+    </div>
+
+    <table class="game-table">
+        <thead><tr><th>Period</th><th>Number</th><th>B/S</th><th>Color</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+    </table>
+
+    <div class="pagination">
+        <button class="p-btn" id="prevBtn" onclick="changePage(-1)">Previous</button>
+        <button class="p-btn" id="nextBtn" onclick="changePage(1)">Next</button>
+    </div>
+
+    <div id="overlay" onclick="closeBet()"></div>
+
+    <div id="resPopup">
+        <img id="resImg" src="win.png">
+        <div class="res-content-box">
+            <div id="resLotteryInfo">Lottery result</div>
+            <div id="resAmt">₹0.00</div>
+            <div id="resPeriodInfo">Period: 000000</div>
+        </div>
+    </div>
+
+    <div id="betModal">
+        <div class="modal-header"><h3 id="betTitle" style="margin:0">Select Big</h3></div>
+        <div class="modal-body">
+            <div class="bet-row">
+                <span>Balance</span>
+                <div class="selector-box" id="baseAmtBox">
+                    <div class="s-item active" onclick="setBase(1)">1</div>
+                    <div class="s-item" onclick="setBase(10)">10</div>
+                    <div class="s-item" onclick="setBase(100)">100</div>
+                    <div class="s-item" onclick="setBase(1000)">1000</div>
+                </div>
+            </div>
+            <div class="bet-row">
+                <span>Quantity</span>
+                <div class="qty-ctrl">
+                    <button class="q-btn" onclick="updateQty(-1)">-</button>
+                    <span id="qtyVal">1</span>
+                    <button class="q-btn" onclick="updateQty(1)">+</button>
+                </div>
+            </div>
+            <div class="bet-row">
+                <div class="selector-box" id="multiBox">
+                    <div class="s-item active" onclick="setMultiPopup(1)">X1</div>
+                    <div class="s-item" onclick="setMultiPopup(5)">X5</div>
+                    <div class="s-item" onclick="setMultiPopup(10)">X10</div>
+                    <div class="s-item" onclick="setMultiPopup(50)">X50</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="footer-btn" style="background:#f5f5f5" onclick="closeBet()">Cancel</button>
+            <button class="footer-btn" style="background:var(--big-orange); color:white;" onclick="confirmFinalBet()">Total amount ₹<span id="totalDisplay">1.00</span></button>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, onValue, query, limitToLast, update, push, get, set, orderByKey } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
+        authDomain: "sg-club-66003.firebaseapp.com",
+        projectId: "sg-club-66003",
+        storageBucket: "sg-club-66003.firebasestorage.app",
+        messagingSenderId: "538659001804",
+        appId: "1:538659001804:web:1245dcae38071d1949b969"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const userId = localStorage.getItem("userLoggedIn"); 
+    if (!userId) { window.location.href = "login.html"; }
+
+    let userBalance = 0;
+    let betState = { base: 1, qty: 1, multi: 1, selection: "" };
+    let lastProcessedPeriod = "";
+    let audioUnlocked = false;
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    window.unlockAudio = () => {
+        if(!audioUnlocked) {
+            const audio = document.getElementById('timerAudio');
+            audio.play().then(() => { audio.pause(); audio.currentTime = 0; });
+            audioUnlocked = true;
+        }
+    };
+
+    setInterval(async () => {
+        let now = new Date();
+        let sec = now.getSeconds();
+        let remaining = 59 - sec;
+        let period = now.getFullYear() + (now.getMonth()+1).toString().padStart(2,'0') + now.getDate().toString().padStart(2,'0') + (now.getHours()*60 + now.getMinutes()).toString().padStart(4, '0');
+        
+        document.getElementById('timeDisp').innerText = "00:" + remaining.toString().padStart(2, '0');
+        document.getElementById('pId').innerText = period;
+
+        if(remaining <= 6 && remaining > 0 && audioUnlocked) {
+            const audio = document.getElementById('timerAudio');
+            audio.play().catch(()=>{});
+        }
+
+        if(remaining <= 5 && remaining > 0) {
+            document.getElementById('bigTimerOverlay').style.display = 'flex';
+            let remStr = remaining.toString().padStart(2, '0');
+            document.getElementById('bigT1').innerText = remStr[0];
+            document.getElementById('bigT2').innerText = remStr[1];
+            closeBet();
+        } else {
+            document.getElementById('bigTimerOverlay').style.display = 'none';
+        }
+
+        if (sec === 0 && lastProcessedPeriod !== period) {
+            lastProcessedPeriod = period;
+            let prevPeriod = (BigInt(period) - 1n).toString();
+            await calculateLowTaxWinner(prevPeriod);
+            showResult(prevPeriod);
+        }
+    }, 1000);
+
+    async function calculateLowTaxWinner(periodId) {
+        const betsRef = ref(db, `bets/${periodId}`);
+        const snapshot = await get(betsRef);
+        let totals = { "Big": 0, "Small": 0 };
+        for(let i=0; i<=9; i++) totals[i.toString()] = 0;
+
+        if (snapshot.exists()) {
+            const allUsersBets = snapshot.val();
+            Object.values(allUsersBets).forEach(userBets => {
+                Object.values(userBets).forEach(bet => {
+                    if(totals[bet.selection] !== undefined) totals[bet.selection] += bet.amount;
+                });
+            });
+        }
+
+        let winningBS = totals["Big"] <= totals["Small"] ? "Big" : "Small";
+        let possibleNums = (winningBS === "Big") ? ["5","6","7","8","9"] : ["0","1","2","3","4"];
+        let winningNum = possibleNums.reduce((a, b) => totals[a] <= totals[b] ? a : b);
+
+        await set(ref(db, `game_results/${periodId}`), { num: parseInt(winningNum), bs: winningBS });
+    }
+
+    async function showResult(periodId) {
+        const betsRef = ref(db, `bets/${periodId}/${userId}`);
+        const resRef = ref(db, `game_results/${periodId}`);
+        const [betsSnap, resSnap] = await Promise.all([get(betsRef), get(resRef)]);
+        
+        if(!resSnap.exists()) return;
+
+        const winningNum = resSnap.val().num;
+        const winningBS = resSnap.val().bs;
+        
+        if(betsSnap.exists()){
+            let totalWinAmt = 0;
+            let totalBetAmt = 0;
+            Object.values(betsSnap.val()).forEach(bet => {
+                totalBetAmt += bet.amount;
+                if(bet.selection == winningNum.toString() || bet.selection == winningBS) {
+                    let mult = (bet.selection == winningBS) ? 1.96 : 9;
+                    totalWinAmt += (bet.amount * mult);
+                }
+            });
+
+            const popup = document.getElementById('resPopup');
+            const resImg = document.getElementById('resImg');
+            const resAmt = document.getElementById('resAmt');
+            
+            document.getElementById('resLotteryInfo').innerHTML = `Result: ${winningNum}, ${winningBS}`;
+            document.getElementById('resPeriodInfo').innerText = `Period: ${periodId}`;
+
+            if(totalWinAmt > 0) {
+                resImg.src = "win.png";
+                resAmt.innerText = "+₹" + totalWinAmt.toFixed(2);
+                resAmt.style.color = "#4caf50";
+                await update(ref(db, 'users/' + userId), { balance: userBalance + totalWinAmt });
+            } else {
+                resImg.src = "loss.png";
+                resAmt.innerText = "-₹" + totalBetAmt.toFixed(2);
+                resAmt.style.color = "#ff5252";
+            }
+            popup.style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            setTimeout(() => { popup.style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }, 4000);
+        }
+    }
+
+    onValue(ref(db, 'users/' + userId), (snap) => {
+        if(snap.exists()){
+            userBalance = snap.val().balance || 0;
+            document.getElementById('balanceText').innerText = "₹" + userBalance.toFixed(2);
+        }
+    });
+
+    onValue(query(ref(db, 'game_results'), orderByKey()), (snap) => {
+        const body = document.getElementById('historyBody');
+        body.innerHTML = "";
+        const data = snap.val();
+        if(data){
+            const sortedKeys = Object.keys(data).sort((a,b) => b - a);
+            const totalItems = sortedKeys.length;
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = sortedKeys.slice(start, end);
+
+            pageItems.forEach(key => {
+                const n = data[key].num;
+                const bs = data[key].bs || (n >= 5 ? 'Big' : 'Small');
+                let color = "";
+                if(n == 0) color = "linear-gradient(to bottom, #ff5252 50%, #9c27b0 50%)";
+                else if(n == 5) color = "linear-gradient(to bottom, #4caf50 50%, #9c27b0 50%)";
+                else color = (n % 2 === 0 ? '#ff5252' : '#4caf50');
+                
+                body.innerHTML += `<tr><td>${key}</td><td><img src="${n}.png" style="width:25px;"></td><td>${bs}</td><td><span class="dot" style="background:${color}"></span></td></tr>`;
+            });
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (end >= totalItems);
+        }
+    });
+
+    window.changePage = (dir) => { currentPage += dir; };
+    window.openBet = (selection) => {
+        if(document.getElementById('bigTimerOverlay').style.display === 'flex') return;
+        betState.selection = selection;
+        document.getElementById('betTitle').innerText = "Select " + selection;
+        document.getElementById('betModal').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        updateTotal();
+    };
+    window.closeBet = () => { document.getElementById('betModal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; };
+    window.setBase = (b) => { betState.base = b; highlight('baseAmtBox', b); updateTotal(); };
+    window.updateQty = (v) => { betState.qty = Math.max(1, betState.qty + v); document.getElementById('qtyVal').innerText = betState.qty; updateTotal(); };
+    window.setMultiPopup = (m) => { betState.multi = m; highlight('multiBox', 'X'+m); updateTotal(); };
+    function updateTotal() { document.getElementById('totalDisplay').innerText = (betState.base * betState.qty * betState.multi).toFixed(2); }
+    function highlight(id, val) { Array.from(document.getElementById(id).children).forEach(el => el.classList.toggle('active', el.innerText == val)); }
+
+    window.confirmFinalBet = async () => {
+        let total = betState.base * betState.qty * betState.multi;
+        let period = document.getElementById('pId').innerText;
+        if(userBalance < total) return alert("Insufficient balance!");
+        await update(ref(db, 'users/' + userId), { balance: userBalance - total });
+        await push(ref(db, `bets/${period}/${userId}`), { selection: betState.selection, amount: total, time: Date.now() });
+        closeBet();
+    };
+</script>
+</body>
+</html>
