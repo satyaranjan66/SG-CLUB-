@@ -30,15 +30,16 @@
         }
         .user-balance-head { color: var(--card-gold); font-weight: bold; font-size: 14px; }
         .header-right { display: flex; gap: 15px; }
-      .header-icon {
-    width: 25px; /* Aapke icon ka size */
-    cursor: pointer;
-    transition: transform 0.2s;
-}
+        .header-icon {
+            width: 25px; 
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
 
-.header-icon:active {
-    transform: scale(0.9); /* Click karne par chota hoga */
-}
+        .header-icon:active {
+            transform: scale(0.9); 
+        }
+
         /* Banner Slider */
         .banner {
             margin: 0 15px;
@@ -162,7 +163,7 @@
         .game{
              font-family: Bold;
              font-size: 50;
-}
+        }
     </style>
 </head>
 <body>
@@ -171,10 +172,9 @@
         <div class="game">SG Club</div>
         <div class="user-balance-head" id="userBalanceHead">Balance: ₹0.00</div>
         <div class="header-right">
-
-<a href="download.html">
-    <img src="download.png" class="header-icon" alt="Download">
-</a>
+            <a href="download.html">
+                <img src="download.png" class="header-icon" alt="Download">
+            </a>
         </div>
     </div>
 
@@ -242,6 +242,7 @@
         <a href="wallet.html" class="nav-tab"><img src="wallet.png">Wallet</a>
         <a href="account.html" class="nav-tab"><img src="account.png">Account</a>
     </nav>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
@@ -259,7 +260,8 @@
     const db = getDatabase(app);
     const userId = localStorage.getItem("userLoggedIn");
 
-    let isAccountActivated = false;
+    // Account activation status global rakha hai
+    window.isAccountActivated = false;
 
     if (!userId) {
         window.location.href = "login.html";
@@ -267,20 +269,24 @@
         onValue(ref(db, 'users/' + userId), (snap) => {
             if(snap.exists()){
                 const data = snap.val();
-                // Balance ₹20 show karega
+                // Real-time balance update (User ko ₹20 bonus dikhega)
                 document.getElementById('userBalanceHead').innerText = "Balance: ₹" + (data.balance || 0).toFixed(2);
-                isAccountActivated = data.isActivated || false; 
+                
+                // Activation state check
+                window.isAccountActivated = data.isActivated || false; 
             }
         });
     }
 
     window.handleGameClick = () => {
-        // ₹20 hone par bhi game nahi chalega jab tak isActivated: true na ho
-        if (!isAccountActivated) {
-            alert("Account not active! Please make your first deposit to start playing and use your ₹20 bonus.");
-            window.location.href = "deposit.html";
-        } else {
+        // Condition: Pehla deposit hone ke baad isActivated true ho jayega
+        // Uske baad balance 0 ho ya kitna bhi, game hamesha khulega
+        if (window.isAccountActivated) {
             window.location.href = "game.html";
+        } else {
+            // Naye users ke liye
+            alert("Account not active! Please make your first deposit to activate your account and start playing.");
+            window.location.href = "deposit.html";
         }
     };
 </script>
