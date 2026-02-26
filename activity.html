@@ -107,19 +107,19 @@
             <button class="claim-btn" onclick="redeemCode()">Claim Reward</button>
         </div>
 
-        <div class="act-card" onclick="checkLock()">
+        <div class="act-card" id="dailyCard" onclick="checkLock('daily')">
             <img src="https://img.freepik.com/free-vector/golden-coins-falling-background_1017-23456.jpg">
             <div class="act-info">
                 <h3>Daily Check-in Bonus</h3>
-                <p>Login every day to get ₹10 - ₹100 daily.</p>
+                <p id="dailyText">Loading bonus info...</p>
             </div>
         </div>
 
-        <div class="act-card" onclick="checkLock()">
+        <div class="act-card" id="depositCard" onclick="checkLock('deposit')">
             <img src="https://img.freepik.com/free-vector/online-casino-shining-banner-with-slot-machine-golden-coins_1284-54019.jpg">
             <div class="act-info">
                 <h3>First Deposit Bonus</h3>
-                <p>Get 100% extra bonus on your first recharge.</p>
+                <p id="depositText">Loading bonus info...</p>
             </div>
         </div>
 
@@ -154,66 +154,91 @@
     const db = getDatabase(app);
     const userId = localStorage.getItem("userLoggedIn");
 
-    // Check Function for Cards
-    window.checkLock = async () => {
+    // UI Update from Admin Settings
+    async function loadAdminSettings() {
+        const settingsSnap = await get(ref(db, 'admin_settings'));
+        if(settingsSnap.exists()){
+            const data = settingsSnap.val();
+            document.getElementById('dailyText').innerText = `Login every day to get ₹${data.daily_bonus || 0} daily.`;
+            document.getElementById('depositText').innerText = `Get ${data.first_deposit_percent || 0}% extra bonus on your first recharge.`;
+        }
+    }
+    loadAdminSettings();
+
+    // Check Function for Cards (Unified)
+    window.checkLock = async (type) => {
         if(!userId) return alert("Please Login First!");
-        const snap = await get(ref(db, 'users/' + userId));
-        if(snap.exists()){
-            const user = snap.val();
+        
+        const [userSnap, settingsSnap] = await Promise.all([
+            get(ref(db, 'users/' + userId)),
+            get(ref(db, 'admin_settings'))
+        ]);
+
+        if(userSnap.exists()){
+            const user = userSnap.val();
+            const settings = settingsSnap.exists() ? settingsSnap.val() : {};
+
             if(!user.isActivated){
                 alert("Please make your first deposit to unlock Activity Rewards!");
                 window.location.href = "deposit.html";
+                return;
+            }
+
+            if(type === 'daily') {
+                const today = new Date().toDateString();
+                if(user.lastCheckIn === today) {
+                    alert("Today's bonus already claimed!");
+                } else {
+                    const bonus = parseFloat(settings.daily_bonus || 0);
+                    let newBal = (user.balance || 0) + bonus;
+                    await update(ref(db, 'users/' + userId), { 
+                        balance: newBal,
+                        lastCheckIn: today 
+                    });
+                    alert(`Success! Daily bonus of ₹${bonus} added.`);
+                }
             } else {
-                alert("Today's task is already completed or coming soon!");
+                alert("First deposit bonus is automatically added upon your first recharge!");
             }
         }
     };
 
-    // Global Redemption Logic (Single Use for Whole App)
+    // Global Redemption Logic
     window.redeemCode = async () => {
         const codeInput = document.getElementById('giftInput').value.trim();
         
         if(!userId) return alert("Please login first!");
         if(!codeInput) return alert("Please enter a code");
 
-        // 1. Get User Data
         const userSnap = await get(ref(db, 'users/' + userId));
         if(!userSnap.exists()) return alert("User error!");
         const user = userSnap.val();
 
-        // 2. Check Activation
         if(!user.isActivated){
             alert("Only active members (after first deposit) can use gift codes!");
             return;
         }
 
-        // 3. GLOBAL LOCK: Check if this code was ALREADY USED by anyone
         const globalUsedSnap = await get(ref(db, `used_gift_codes/${codeInput}`));
         if(globalUsedSnap.exists()){
             alert("This code has already been redeemed by another user!");
             return;
         }
 
-        // 4. Check if code exists in Admin's Database
         const giftSnap = await get(ref(db, 'gift_codes/' + codeInput));
         
         if(giftSnap.exists()){
             const giftData = giftSnap.val();
             const bonus = parseFloat(giftData.price);
 
-            // 5. Update User Balance
             let newBal = (user.balance || 0) + bonus;
             await update(ref(db, 'users/' + userId), { balance: newBal });
 
-            // 6. Set Global Lock (Isse ab koi aur is code ko use nahi kar payega)
             await set(ref(db, `used_gift_codes/${codeInput}`), {
                 userId: userId,
                 redeemedAt: new Date().toISOString(),
                 amount: bonus
             });
-
-            // OPTIONAL: Code ko Admin list se delete karne ke liye niche wali line uncomment karein
-            // await remove(ref(db, 'gift_codes/' + codeInput));
 
             alert(`Success! ₹${bonus} added to your wallet.`);
             document.getElementById('giftInput').value = "";
