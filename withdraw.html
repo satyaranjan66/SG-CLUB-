@@ -235,7 +235,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, set, get, update } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgu-0Gd6LKzpSfNteu5fyKWtwgC1rd0t4",
@@ -303,6 +303,18 @@
         window.processWithdraw = async () => {
             const amt = parseFloat(document.getElementById('withAmount').value);
             
+            // Fetch latest user data to check activation
+            const userSnap = await get(ref(db, 'users/' + userId));
+            if(!userSnap.exists()) return alert("User error!");
+            const userData = userSnap.val();
+
+            // First Deposit Check
+            if(!userData.isActivated){
+                alert("Withdrawal Locked! Please make your first deposit to activate your account for withdrawals.");
+                window.location.href = "deposit.html";
+                return;
+            }
+            
             if(!upiAdded) return alert("Please add UPI detail first");
             if(isNaN(amt) || amt < 200) return alert("Minimum withdrawal is ₹200");
             if(amt > currentBalance) return alert("Insufficient balance");
@@ -319,7 +331,7 @@
                 });
 
                 const newBalance = currentBalance - amt;
-                await set(ref(db, `users/${userId}/balance`), newBalance);
+                await update(ref(db, `users/${userId}`), { balance: newBalance });
 
                 alert("Success! Request sent.");
                 document.getElementById('withAmount').value = "";
